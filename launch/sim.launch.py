@@ -151,7 +151,14 @@ def generate_launch_description():
         executable="spawner",
         arguments=["column_controller", "--controller-manager", "controller_manager"],
     )
-    
+
+    gantry_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gantry_position_controller", "--controller-manager", "controller_manager"],
+        condition=IfCondition(PythonExpression(["'", mode, "' == 'base'"]))
+    )
+
     # Run the spawner node from the ros_gz_sim package.
     spawn_robo_drill = Node(
         package='ros_gz_sim',
@@ -224,6 +231,7 @@ def generate_launch_description():
         sim_controller_spawner_diff,
         sim_controller_spawner_omni,
         column_controller_spawner,
+        gantry_controller_spawner,
     ]
     
     # Launch them all!
