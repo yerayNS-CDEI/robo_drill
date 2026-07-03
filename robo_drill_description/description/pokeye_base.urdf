@@ -375,6 +375,112 @@
     effort="1000.0"
     velocity="0.1" />
   </joint>
+
+  <!-- ============================================================= -->
+  <!-- Pokeye 3-stage linear-actuator gantry + end rotation.         -->
+  <!-- Stage 1 (vertical Z lift) is the column above.                -->
+  <!-- Stage 2 = gantry_y_joint  : sideways (Y) motion.              -->
+  <!-- Stage 3 = gantry_x_joint  : reach (X) motion.                 -->
+  <!-- End    = gantry_rot_joint : tool rotation about Z.            -->
+  <!-- Geometry is placeholder rectangular prisms; refine as needed. -->
+  <!-- ============================================================= -->
+
+  <!-- Stage 2: side (Y) carriage, mounted on top of the column -->
+  <link name="gantry_y_link">
+    <inertial>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <mass value="3.0" />
+      <inertia ixx="0.065" ixy="0.0" ixz="0.0"
+               iyy="0.0061" iyz="0.0" izz="0.0661" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12 0.50 0.10" />
+      </geometry>
+      <material name="">
+        <color rgba="0.30 0.45 0.85 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12 0.50 0.10" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="gantry_y_joint" type="prismatic">
+    <origin xyz="0 0 0.73" rpy="0 0 0" />
+    <parent link="column_link" />
+    <child link="gantry_y_link" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.25" upper="0.25" effort="500.0" velocity="0.2" />
+  </joint>
+
+  <!-- Stage 3: reach (X) beam, mounted on the Y carriage -->
+  <link name="gantry_x_link">
+    <inertial>
+      <origin xyz="0.15 0 0.05" rpy="0 0 0" />
+      <mass value="2.0" />
+      <inertia ixx="0.0033" ixy="0.0" ixz="0.0"
+               iyy="0.0433" iyz="0.0" izz="0.0433" />
+    </inertial>
+    <visual>
+      <origin xyz="0.15 0 0.05" rpy="0 0 0" />
+      <geometry>
+        <box size="0.50 0.10 0.10" />
+      </geometry>
+      <material name="">
+        <color rgba="0.30 0.75 0.40 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.15 0 0.05" rpy="0 0 0" />
+      <geometry>
+        <box size="0.50 0.10 0.10" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="gantry_x_joint" type="prismatic">
+    <origin xyz="0 0 0.10" rpy="0 0 0" />
+    <parent link="gantry_y_link" />
+    <child link="gantry_x_link" />
+    <axis xyz="1 0 0" />
+    <limit lower="0.0" upper="0.40" effort="500.0" velocity="0.2" />
+  </joint>
+
+  <!-- End rotation: tool that rotates about Z, at the front of the reach beam -->
+  <link name="gantry_rot_link">
+    <inertial>
+      <origin xyz="0 0 -0.075" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="0.0024" ixy="0.0" ixz="0.0"
+               iyy="0.0024" iyz="0.0" izz="0.0011" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.075" rpy="0 0 0" />
+      <geometry>
+        <box size="0.08 0.08 0.15" />
+      </geometry>
+      <material name="">
+        <color rgba="0.90 0.55 0.15 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.075" rpy="0 0 0" />
+      <geometry>
+        <box size="0.08 0.08 0.15" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="gantry_rot_joint" type="revolute">
+    <origin xyz="0.40 0 0.05" rpy="0 0 0" />
+    <parent link="gantry_x_link" />
+    <child link="gantry_rot_link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.1416" upper="3.1416" effort="100.0" velocity="1.0" />
+  </joint>
+
   <!-- Add Gazebo materials for the pokeye links -->
   <gazebo reference="base_link">
       <collide_bitmask>0</collide_bitmask>
@@ -386,6 +492,21 @@
   </gazebo>
 
   <gazebo reference="column_link">
+    <collide_bitmask>0</collide_bitmask>
+    <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="gantry_y_link">
+    <collide_bitmask>0</collide_bitmask>
+    <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="gantry_x_link">
+    <collide_bitmask>0</collide_bitmask>
+    <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="gantry_rot_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
