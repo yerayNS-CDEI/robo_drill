@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1259" height="962" xmlns="http://www.w3.org/2000/svg">
+  <!-- Floor Plan -->
+  <rect width="1259" height="962" fill="white"/>
+  <!-- Grid (1m spacing) -->
+  <g stroke="#E0E0E0" stroke-width="0.5">
+    <line x1="12.5" y1="0" x2="12.5" y2="962"/>
+    <line x1="62.5" y1="0" x2="62.5" y2="962"/>
+    <line x1="112.5" y1="0" x2="112.5" y2="962"/>
+    <line x1="162.5" y1="0" x2="162.5" y2="962"/>
+    <line x1="212.5" y1="0" x2="212.5" y2="962"/>
+    <line x1="262.5" y1="0" x2="262.5" y2="962"/>
+    <line x1="312.5" y1="0" x2="312.5" y2="962"/>
+    <line x1="362.5" y1="0" x2="362.5" y2="962"/>
+    <line x1="412.5" y1="0" x2="412.5" y2="962"/>
+    <line x1="462.5" y1="0" x2="462.5" y2="962"/>
+    <line x1="512.5" y1="0" x2="512.5" y2="962"/>
+    <line x1="562.5" y1="0" x2="562.5" y2="962"/>
+    <line x1="612.5" y1="0" x2="612.5" y2="962"/>
+    <line x1="662.5" y1="0" x2="662.5" y2="962"/>
+    <line x1="712.5" y1="0" x2="712.5" y2="962"/>
+    <line x1="762.5" y1="0" x2="762.5" y2="962"/>
+    <line x1="812.5" y1="0" x2="812.5" y2="962"/>
+    <line x1="862.5" y1="0" x2="862.5" y2="962"/>
+    <line x1="912.5" y1="0" x2="912.5" y2="962"/>
+    <line x1="962.5" y1="0" x2="962.5" y2="962"/>
+    <line x1="1012.5" y1="0" x2="1012.5" y2="962"/>
+    <line x1="1062.5" y1="0" x2="1062.5" y2="962"/>
+    <line x1="1112.5" y1="0" x2="1112.5" y2="962"/>
+    <line x1="1162.5" y1="0" x2="1162.5" y2="962"/>
+    <line x1="1212.5" y1="0" x2="1212.5" y2="962"/>
+    <line x1="0" y1="0.49999999999998934" x2="1259" y2="0.49999999999998934"/>
+    <line x1="0" y1="50.499999999999986" x2="1259" y2="50.499999999999986"/>
+    <line x1="0" y1="100.49999999999999" x2="1259" y2="100.49999999999999"/>
+    <line x1="0" y1="150.5" x2="1259" y2="150.5"/>
+    <line x1="0" y1="200.5" x2="1259" y2="200.5"/>
+    <line x1="0" y1="250.5" x2="1259" y2="250.5"/>
+    <line x1="0" y1="300.5" x2="1259" y2="300.5"/>
+    <line x1="0" y1="350.5" x2="1259" y2="350.5"/>
+    <line x1="0" y1="400.5" x2="1259" y2="400.5"/>
+    <line x1="0" y1="450.5" x2="1259" y2="450.5"/>
+    <line x1="0" y1="500.5" x2="1259" y2="500.5"/>
+    <line x1="0" y1="550.5" x2="1259" y2="550.5"/>
+    <line x1="0" y1="600.5" x2="1259" y2="600.5"/>
+    <line x1="0" y1="650.5" x2="1259" y2="650.5"/>
+    <line x1="0" y1="700.5" x2="1259" y2="700.5"/>
+    <line x1="0" y1="750.5" x2="1259" y2="750.5"/>
+    <line x1="0" y1="800.4999999999999" x2="1259" y2="800.4999999999999"/>
+    <line x1="0" y1="850.4999999999999" x2="1259" y2="850.4999999999999"/>
+    <line x1="0" y1="900.4999999999999" x2="1259" y2="900.4999999999999"/>
+    <line x1="0" y1="950.4999999999999" x2="1259" y2="950.4999999999999"/>
+  </g>
+  <!-- Building Elements -->
+    <polygon points="375.5,144.4999999999999 391.0,144.4999999999999 391.0,111.50000000000011 375.5,111.50000000000011" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="676.5,144.4999999999999 692.0,144.4999999999999 692.0,111.50000000000011 676.5,111.50000000000011" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="975.9999999999998,144.4999999999999 991.4999999999999,144.4999999999999 991.4999999999999,111.50000000000011 975.9999999999998,111.50000000000011" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="375.5,494.5 391.0,494.5 391.0,461.5 375.5,461.5" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="676.5,494.5 692.0,494.5 692.0,461.5 676.5,461.5" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="975.9999999999998,494.5 991.4999999999999,494.5 991.4999999999999,461.5 975.9999999999998,461.5" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="375.5,849.5 391.0,849.5 391.0,816.5 375.5,816.5" 
+             fill="#6464FF" 
+             stroke="#4040CC" 
+             stroke-width="2"/>
+    <polygon points="112.5,111.50000000000011 1147.0,111.50000000000011 1147.0,99.00000000000011 112.5,99.00000000000011" 
+             fill="#333333" 
+             stroke="#000000" 
+             stroke-width="2"/>
+    <polygon points="1147.0,111.50000000000011 1147.0,626.5 1159.5,626.5 1159.5,111.50000000000011" 
+             fill="#333333" 
+             stroke="#000000" 
+             stroke-width="2"/>
+    <polygon points="1147.0000000000002,626.5 699.5000000000002,626.5 699.5000000000002,639.0 1147.0000000000002,639.0" 
+             fill="#333333" 
+             stroke="#000000" 
+             stroke-width="2"/>
+    <polygon points="699.5,626.5 699.5,849.5000000000001 712.0,849.5000000000001 712.0,626.5" 
+             fill="#333333" 
+             stroke="#000000" 
+             stroke-width="2"/>
+    <polygon points="699.5,849.5 112.5,849.5 112.5,862.0 699.5,862.0" 
+             fill="#333333" 
+             stroke="#000000" 
+             stroke-width="2"/>
+    <polygon points="112.5,849.5 112.50000000000004,111.50000000000011 100.00000000000004,111.50000000000011 100.0,849.5" 
+             fill="#333333" 
+             stroke="#000000" 
+             stroke-width="2"/>
+  <!-- Labels -->
+  <g font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    <rect x="323.25" y="143.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="383.25" y="163.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_1</text>
+    <text x="383.25" y="183.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="624.25" y="143.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="684.25" y="163.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_2</text>
+    <text x="684.25" y="183.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="923.7499999999999" y="143.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="983.7499999999999" y="163.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_3</text>
+    <text x="983.7499999999999" y="183.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="323.25" y="493.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="383.25" y="513.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_4</text>
+    <text x="383.25" y="533.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="624.25" y="493.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="684.25" y="513.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_5</text>
+    <text x="684.25" y="533.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="923.7499999999999" y="493.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="983.7499999999999" y="513.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_6</text>
+    <text x="983.7499999999999" y="533.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="323.25" y="768.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="383.25" y="788.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">column_7</text>
+    <text x="383.25" y="808.0" text-anchor="middle" 
+          fill="black" font-size="16">0.31 × 0.66m</text>
+    <rect x="569.75" y="40.250000000000114" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="629.75" y="60.250000000000114" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">wall_1</text>
+    <text x="629.75" y="80.25000000000011" text-anchor="middle" 
+          fill="black" font-size="16">20.69 × 0.25m</text>
+    <rect x="1093.25" y="344.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="1153.25" y="364.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">wall_2</text>
+    <text x="1153.25" y="384.0" text-anchor="middle" 
+          fill="black" font-size="16">10.30 × 0.25m</text>
+    <rect x="863.2500000000002" y="607.75" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="923.2500000000002" y="627.75" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">wall_3</text>
+    <text x="923.2500000000002" y="647.75" text-anchor="middle" 
+          fill="black" font-size="16">8.95 × 0.25m</text>
+    <rect x="645.75" y="713.0" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="705.75" y="733.0" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">wall_4</text>
+    <text x="705.75" y="753.0" text-anchor="middle" 
+          fill="black" font-size="16">4.46 × 0.25m</text>
+    <rect x="346.00000000000006" y="870.75" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="406.00000000000006" y="890.75" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">wall_5</text>
+    <text x="406.00000000000006" y="910.75" text-anchor="middle" 
+          fill="black" font-size="16">11.74 × 0.25m</text>
+    <rect x="46.25000000000003" y="455.50000000000006" width="120" height="50" 
+          fill="white" opacity="0.8" rx="5"/>
+    <text x="106.25000000000003" y="475.50000000000006" text-anchor="middle" 
+          fill="black" font-size="18" font-weight="bold">wall_6</text>
+    <text x="106.25000000000003" y="495.50000000000006" text-anchor="middle" 
+          fill="black" font-size="16">14.76 × 0.25m</text>
+  </g>
+  <!-- Legend -->
+  <g transform="translate(20, 20)">
+    <rect width="200" height="80" fill="white" stroke="black" stroke-width="2" opacity="0.95"/>
+    <rect x="15" y="15" width="30" height="20" fill="#333333" stroke="#000000" stroke-width="2"/>
+    <text x="55" y="31" font-family="Arial" font-size="18">Walls</text>
+    <rect x="15" y="40" width="30" height="20" fill="#6464FF" stroke="#4040CC" stroke-width="2"/>
+    <text x="55" y="56" font-family="Arial" font-size="18">Columns</text>
+  </g>
+  <!-- Scale -->
+  <g transform="translate(1009, 912)">
+    <line x1="0" y1="15" x2="0" y2="0" stroke="black" stroke-width="3"/>
+    <line x1="0" y1="7" x2="250" y2="7" stroke="black" stroke-width="3"/>
+    <line x1="250" y1="15" x2="250" y2="0" stroke="black" stroke-width="3"/>
+    <text x="125.0" y="35" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold">5m</text>
+  </g>
+  <!-- Title -->
+  <text x="629.5" y="40" text-anchor="middle" font-family="Arial" font-size="28" font-weight="bold">Floor Plan - Castelldefels Indoors</text>
+</svg>

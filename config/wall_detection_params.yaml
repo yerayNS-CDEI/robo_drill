@@ -1,0 +1,240 @@
+wall_detection_node:
+  ros__parameters:
+    # Input merged + self-filtered LiDAR cloud (arm/body already removed).
+    input_topic: /combined_cloud_filtered
+
+    # FIXED, gravity-aligned frame walls are detected/accumulated in (odom or
+    # map). Must not be base_link — accumulation assumes static walls stay put
+    # across the window, which a moving robot frame would smear. On sloped
+    # floors, replace the percentile floor estimate with a RANSAC ground normal
+    # (Tier-A TODO) and align to it before banding.
+    target_frame: odom
+
+    # Temporal accumulation window (s). Each cloud has only ~800 band points, too
+    # sparse for stable single-frame line fitting; accumulating ~this long
+    # densifies the band and makes static walls persistent (kills the flicker).
+    # Larger = smoother/more persistent but slower to forget moved objects.
+    # 1.2 s (up from 0.7) densifies the band so far/sparse walls are still
+    # detected each frame — important in lidar-only mode where every wall must be
+    # detected repeatedly to get confirmed.
+    accumulation_window: 1.2
+
+    # ---- TF timing / motion gate (walls-at-wrong-coordinates-while-turning) ----
+    # icp_odometry publishes the odom TF ~100-500 ms BEHIND the cloud, so the
+    # exact-stamp lookup must WAIT for odom to catch up to the cloud's stamp and
+    # return the correct HISTORICAL pose. Too small and it gives up and falls
+    # back to a stale/latest pose; ~0.3 s covers the typical odom lag. Blocks the
+    # cloud callback up to this long (fine: detection is not latency-critical).
+    tf_timeout: 0.30
+    # If the exact-stamp lookup still fails after waiting, fall back to the latest
+    # TF only if within this of the cloud stamp; else drop. The motion gate below
+    # covers the dangerous (turning) case, so a modest cap is safe.
+    max_tf_stale: 0.10
+    # Pause detection while the robot turns faster than max_angular_vel, and for
+    # motion_settle_time after (covers cloud latency + the accumulation window
+    # still holding turn-era clouds). Stops the smeared band being built at all.
+    motion_gate: true
+    odom_topic: /rtabmap/odom
+    max_angular_vel: 0.3
+    motion_settle_time: 0.5
+
+    # Detector front-end:
+    # - projection_hough: current 2.5D bird's-eye line extraction.
+    # - rht_3d: randomized 3D Hough plane proposals on the vertical band cloud,
+    #   still followed by the same wall scoring + constrained plane refinement.
+    detector_mode: projection_hough
+
+    # ---- preprocessing ----
+    voxel_leaf: 0.05          # downsample leaf (m); 0 disables
+    floor_percentile: 0.05    # floor height = this percentile of z (robust min)
+    band_min_height: 0.30     # keep points this high above the floor ...
+    band_max_height: 2.00     # ... up to here (drops floor/ceiling/low clutter)
+
+    # ---- 2D bird's-eye grid + verticality test ----
+    grid_resolution: 0.05         # cell size (m)
+    min_points_per_cell: 3        # a wall cell stacks many returns
+    min_cell_vertical_extent: 0.5 # occupied slices must span at least this tall
+    # Slice-occupancy verticality: a wall cell must be a TALL *and DENSE* column,
+    # not just have a big top-to-bottom extent. Each column is binned into slices
+    # of vertical_slice_height; vertical_fill_ratio = occupied / spanned slices.
+    # This rejects the hollow doorway-lintel column (a bar on top, open below)
+    # that the old extent-only test confirmed as a full-height wall, while still
+    # passing a wall occluded from the bottom (dense from mid up).
+    vertical_slice_height: 0.20
+    # 0.45 (down from 0.6): far walls return sparsely on a 3D lidar and won't
+    # fill 60% of their column, so they were being dropped. 0.45 still rejects a
+    # hollow lintel column (only the top ~1-2 slices) but accepts a real wall
+    # seen sparsely. Raise toward 0.6 if thin clutter reappears.
+    vertical_fill_ratio: 0.45
+
+    # ---- line extraction (Hough) + acceptance ----
+    min_wall_length: 1.0      # reject short segments (columns, furniture edges)
+    # Furniture rejection by height: the wall TOP must reach this high above the
+    # floor. Walls run to the ceiling; counters (~0.9 m), drawers (~0.8 m) and
+    # most cabinets (<1.5 m) do not, so they're dropped. Gating the top (not the
+    # extent) keeps walls occluded from below. Lower if real walls are missed in
+    # low-ceiling rooms; raise toward 1.8 to also drop tall wardrobes.
+    min_wall_height: 1.5
+    max_wall_gap: 0.30        # bridge gaps along a wall (doorways stay split if wider)
+    hough_threshold: 20       # min cell votes for a line
+    line_inlier_dist: 0.10    # band point within this of the segment = support
+    min_support_points: 30    # reject under-supported candidates (30: keep far walls)
+    merge_angle_deg: 8.0      # merge near-collinear fragments within ...
+    merge_dist: 0.15          # ... this perpendicular offset
+
+    # ---- Alternative Tier-A front-end: 3D randomized Hough plane proposals ----
+    # Use when detector_mode:=rht_3d. These parameters only control proposal
+    # generation; acceptance still goes through the same wall-specific gates
+    # below (ceiling reach, blob rejection, column rejection, support density).
+    # 20000 / 10 (up from 12000 / 6): more sampling iterations let sparse/far
+    # walls accumulate votes, and more rounds reach smaller walls after the
+    # dominant ones are removed. Both help recall at negligible FP cost.
+    rht_max_iterations: 20000
+    rht_max_rounds: 10
+    # Votes are only a COARSE proposal pre-filter; the real wall/clutter
+    # discrimination happens in the geometric gates below (ceiling reach, blob,
+    # column). A high threshold (25) starved sparse/far/oblique real walls whose
+    # votes get diluted across adjacent accumulator cells, so it was lowered to
+    # 12 to restore recall while the geometric gates reject the false positives.
+    # Raise if clutter reappears; lower if real walls are still missed. Watch the
+    # "rht_3d funnel" log to see whether walls die here (voted_bins) or later.
+    rht_vote_threshold: 12
+    # 40 (from 20): evaluate more candidate planes per round so a wall that isn't
+    # the single top-voted bin still gets a chance.
+    rht_top_bins_per_round: 40
+    rht_rho_bin_size: 0.08
+    rht_theta_bin_size_deg: 4.0
+    rht_phi_bin_size_deg: 3.0
+    # 10 (from 15): 15 deg admits tilted furniture faces; true walls are
+    # near-vertical.
+    rht_max_wall_phi_deg: 10.0
+    rht_min_pairwise_dist: 0.20
+    # 2.5 (from 4.0): force the 3 sampled points to come from the same wall
+    # patch, not unrelated far structures that happen to be coplanar.
+    rht_max_pairwise_dist: 2.50
+    # 0.05 (from 0.02): reject near-collinear slivers that define a plane through
+    # mostly empty space.
+    rht_min_triangle_area: 0.05
+    # 0.05 (from 0.08): matches plane_dist_thresh; stops the infinite plane from
+    # grazing off-plane clutter into the inlier set.
+    rht_plane_inlier_dist: 0.05
+    # 90: enough that random coplanar clutter rarely qualifies, but low enough
+    # that a far wall seen sparsely still passes (130 was dropping real far
+    # walls). If the funnel log shows a large rej_inliers, lower this or relax
+    # rht_plane_inlier_dist.
+    rht_min_candidate_inliers: 90
+    # 25 (from 20): a genuine wall run is dense; a clutter smear is not. Kept
+    # modest so an occlusion-fragmented wall's shorter runs still survive.
+    rht_min_segment_points: 25
+    # 0.25 (from 0.35): split a clutter smear into separate runs instead of
+    # bridging it into one continuous "wall".
+    rht_segment_gap: 0.25
+    rht_random_seed: 1337
+
+    # ---- Tier B: constrained vertical-plane fit (RANSAC PARALLEL_PLANE) ----
+    # Per wall, fit a plane to its pooled support, constrained parallel to the
+    # gravity axis so it stays vertical. Yields the precise plane (normal + d),
+    # refined endpoints and height extent for the arm scanning planner.
+    plane_dist_thresh: 0.04   # RANSAC inlier band to the plane (m); tighter than line_inlier_dist
+    plane_eps_angle_deg: 15.0 # max tilt of the plane from vertical
+    ransac_max_iter: 200
+    min_plane_inliers: 80     # below this the fit is skipped (refined=false, Tier-A geometry kept)
+
+    publish_debug_cloud: true # publish the vertical-band cloud for tuning
+
+# Tier C: persistent semantic wall layer. NOT a SLAM/occupancy mapper — it reads
+# RTAB-Map's map<-odom localization and accumulates the detector's per-frame
+# walls into persistent wall objects anchored in the `map` frame.
+wall_aggregator_node:
+  ros__parameters:
+    input_topic: /wall_detection_node/walls
+    map_frame: map
+
+    # Data association: a detection matches an existing wall if their normals are
+    # near-parallel, the planes are within assoc_dist, and the segments overlap
+    # (or the gap is < assoc_overlap_gap).
+    assoc_angle_deg: 12.0
+    assoc_dist: 0.25
+    # 0.4 (from 1.0): fuse() unions the extent of associated detections, so a
+    # large value bridges two walls flanking an open passage (doorway ~0.8 m)
+    # into one wall across the opening. Kept below a doorway so passage-separated
+    # walls stay distinct; raise only if one wall gets split into duplicates.
+    assoc_overlap_gap: 0.4
+
+    # Persist the confirmed walls to a file as the robot drives, and reload it on
+    # startup so walls survive a restart. The aggregator already dedups (stable
+    # id per wall, coordinates updated in place on every re-observation), so the
+    # file is a full snapshot keyed by id: earlier walls are kept, a re-seen wall
+    # overwrites its own entry (no duplicate) with the fused coordinates, a newly
+    # confirmed wall is appended. Written atomically and only when the set
+    # changed. On load, the walls seed the aggregator and every new detection is
+    # matched against them (updated if it exists, added if not).
+    save_walls_to_file: true
+    # File name (or absolute path). A relative name is placed in the package's
+    # rgb_detections/ folder, next to the YOLO detection CSVs.
+    wall_file_path: "detected_walls.yaml"
+    wall_file_epsilon: 0.01   # coord change (m) below which a rewrite is skipped
+
+    # A wall is "confirmed" (published) after this many observations; rejects
+    # transient false detections. Unconfirmed walls unseen for provisional_timeout
+    # are dropped. Confirmed walls persist (the building doesn't move).
+    # 3 (back up from 2): a chance RHT alignment rarely reproduces at the same
+    # map location every frame, so 3 observations cheaply filters transient
+    # false positives while real (stable) walls still confirm. Drop toward 2 if
+    # far walls glimpsed only briefly are being missed. provisional_timeout is
+    # raised so
+    # a wall seen once isn't forgotten before the robot looks again.
+    min_observations: 3
+    provisional_timeout: 10.0
+
+    # Grid anchoring: take the drift-free wall LAYOUT from RTAB-Map's optimized
+    # occupancy grid (loop-closure-corrected) and use lidar only to confirm
+    # verticality + supply height. Output walls then stop wobbling with
+    # instantaneous odom/ICP drift. Needs the SLAM grid on grid_topic.
+    use_grid: true
+    grid_topic: /map
+    grid_occupied_thresh: 50    # cell value >= this is an obstacle (0..100; -1 unknown)
+    grid_min_wall_length: 2.0   # reject short occupied lines (furniture edges are ~1m)
+    grid_max_wall_gap: 0.4      # bridge gaps along a wall line (Hough stage)
+    grid_hough_threshold: 15
+    grid_match_dist: 0.60       # a lidar wall within this of a grid line confirms it
+    grid_match_angle_deg: 20.0
+    grid_prune_timeout: 30.0    # (unused since fresh re-extract each grid update)
+    # Max along-wall gap bridged into one continuous wall. Larger -> doorways and
+    # notches are joined (fewer, longer walls); smaller -> walls split at gaps.
+    # Kept below a typical doorway (~0.8 m) so openings carved by grid_opening_min_run
+    # are not re-bridged into a solid wall here.
+    grid_merge_gap: 0.6
+
+    # Structural validation of each raw Hough line (kills the grey false-positive
+    # flood). A line is kept only where the grid cells under it are genuinely
+    # occupied (>= grid_min_fill_ratio), and it is SPLIT at any run of known-free
+    # cells >= grid_opening_min_run (a doorway/passage the robot drove through),
+    # so a wall is no longer drawn across an open gap.
+    grid_min_fill_ratio: 0.6
+    grid_opening_min_run: 0.6
+
+    # false: show the full drift-free grid layout immediately; walls not yet
+    # swept by the lidar are grid-only (refined=false, grey marker, default
+    # height). true: withhold a wall until the lidar confirms it as a real
+    # (tall) wall, so ONLY lidar-confirmed walls are published + drawn (no grey).
+    require_lidar_confirmation: false
+
+    # Grey-wall retraction: a grid wall starts grey (provisional). Once the robot
+    # has been within lidar_confirm_range of it on >= reject_after_sweeps update
+    # cycles yet the lidar NEVER detected a real wall there, it is judged a false
+    # positive (furniture/speckle that leaked into the grid) and removed from the
+    # output + markers. Walls the lidar has confirmed are never retracted.
+    base_frame: base_link
+    lidar_confirm_range: 4.0    # robot must come this close to "sweep" a wall (m)
+    reject_after_sweeps: 20     # in-range cycles with zero lidar support -> drop it
+    default_z_min: 0.0          # assumed height band for grid-only (unswept) walls
+    default_z_max: 2.5
+
+    # Opening fusion: attach YOLO 3D door/window centers to their wall. OFF by
+    # default — requires the YOLO hand-eye calibration to be valid so the
+    # openings are metrically correct in the map frame (handeye_calibrated:=true).
+    # NOTE: currently attached only in lidar-only mode (not yet in grid mode).
+    use_openings: false
+    openings_topic: /yolo_detection_node/detected_openings
+    opening_assoc_dist: 0.35

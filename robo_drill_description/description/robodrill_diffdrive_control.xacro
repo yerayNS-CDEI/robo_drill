@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <ros2_control name="robo_drill_diffdrive_controller" type="system">
+        <xacro:unless value="$(arg simulation)">
+            <xacro:unless value="$(arg use_mock_hardware)">
+                <hardware>
+                    <plugin>robodrill_hw_interface/RobodrillHardwareInterface</plugin>
+                    <param name="left_wheel_name">drivewhl_l_joint</param>
+                    <param name="right_wheel_name">drivewhl_r_joint</param>
+                    <param name="turret_name">turret_joint</param>
+                    <param name="transmission_ratio_turret">51.67</param>
+                    <param name="wheel_radius">0.125</param>
+                    <param name="encoder_ticks_per_rev">2048</param>
+                    <param name="transmission_ratio_wheels">20.0</param>
+                    <param name="slave_left_motor">1</param>
+                    <param name="slave_right_motor">2</param>
+                    <param name="slave_turret_motor">3</param>
+                    <param name="ethercat_interface">$(arg ethercat_interface)</param>
+                </hardware>
+            </xacro:unless>
+            <xacro:if value="$(arg use_mock_hardware)">
+                <hardware>
+                    <plugin>mock_components/GenericSystem</plugin>
+                    <param name="calculate_dynamics">true</param>
+                </hardware>
+            </xacro:if>
+        </xacro:unless>
+
+        <xacro:if value="$(arg simulation)">
+            <hardware>
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </hardware>
+        </xacro:if>
+
+        <joint name="drivewhl_l_joint">
+            <command_interface name="velocity"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="drivewhl_r_joint">
+            <command_interface name="velocity"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="turret_joint">
+            <command_interface name="velocity"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
+    <!-- Column Hardware Interface -->
+    <ros2_control name="column_controller" type="system">
+        <xacro:unless value="$(arg simulation)">
+            <xacro:unless value="$(arg use_mock_hardware)">
+                <hardware>
+                    <plugin>column_hw_interface/ColumnHardwareInterface</plugin>
+                    <param name="column_name">column_joint</param>
+                </hardware>
+            </xacro:unless>
+            <xacro:if value="$(arg use_mock_hardware)">
+                <hardware>
+                    <plugin>mock_components/GenericSystem</plugin>
+                    <param name="calculate_dynamics">true</param>
+                </hardware>
+            </xacro:if>
+        </xacro:unless>
+
+        <xacro:if value="$(arg simulation)">
+            <hardware>
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </hardware>
+        </xacro:if>
+
+        <joint name="column_joint">
+            <xacro:if value="$(arg simulation)">
+                <command_interface name="effort"/>
+            </xacro:if>
+            <xacro:unless value="$(arg simulation)">
+                <command_interface name="position"/>
+            </xacro:unless>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
+    <xacro:if value="$(arg simulation)">
+        <xacro:if value="$(arg base_only)">
+            <!-- The Gz Sim plugin launches the controller manager with it. With real hardware we would need
+            to launch a controller manager before launching controllers-->
+            <gazebo>
+                <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                    <parameters>$(arg simulation_controllers)</parameters>
+                    <ros>
+                        <remapping>/diffbot_base_controller/odom:=/controller/odometry</remapping>
+                    </ros>
+                </plugin>
+            </gazebo>
+        </xacro:if>
+    </xacro:if>
+</robot>

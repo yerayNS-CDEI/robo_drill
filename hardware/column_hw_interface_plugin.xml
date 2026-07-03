@@ -1,0 +1,9 @@
+<library path="robodrill_hw_interface">
+  <class name="column_hw_interface/ColumnHardwareInterface"
+         type="column_hw_interface::ColumnHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware interface for column control.
+    </description>
+  </class>
+</library>

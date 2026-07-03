@@ -1,0 +1,12 @@
+/camera_rear/camera:
+  ros__parameters:
+    serial_no: '031522071518'
+    camera_name: camera_rear
+    enable_color: true
+    enable_depth: true
+    pointcloud.enable: true
+    align_depth.enable: true
+    rgb_camera.color_profile: 640x480x15
+    depth_module.depth_profile: 640x480x15
+    enable_infra1: false
+    enable_infra2: false

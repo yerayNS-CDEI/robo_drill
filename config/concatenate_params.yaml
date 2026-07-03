@@ -1,0 +1,29 @@
+pointcloud_merge:
+  ros__parameters:
+    target_frame: os_lidar
+    clouds: 3
+    # Output publish rate. Decoupled from input rates: each tick merges the
+    # latest buffered cloud from every source, so this no longer needs to be a
+    # lowest-common-denominator of the sensor rates. 10 Hz matches the dome;
+    # the sicks (20 Hz) contribute their newest sample each tick.
+    hz: 10.0
+    # 0.0 = never block waiting for a transform. All three lidars are rigidly
+    # mounted on turret_link, so sick->os_lidar is a STATIC transform (on
+    # /tf_static, valid at any timestamp). Once /tf_static is received it is
+    # cached forever, so a non-zero timeout only ever stalls during the first
+    # ~1-2 s before /tf_static arrives (the ~205 ms startup ticks we saw). With
+    # 0.0 we fail fast to the latest-TF fallback instead of waiting; because the
+    # transform is static there is no accuracy cost (latest == exact).
+    transform_timeout_sec: 0.0
+    fallback_to_latest_transform: true
+    # Drop a source from the merge if its newest cloud is older than this many
+    # seconds (a hung/dead sensor). The dome publishes erratically with gaps
+    # observed up to ~0.44 s, so keep this comfortably above that or the dome
+    # will momentarily drop out of the merge (flicker). Trade-off: a genuinely
+    # dead sensor keeps getting re-published (stale) for up to this long.
+    max_cloud_age: 0.75
+
+    cloud_in1_topic: /dome/points
+    cloud_in2_topic: /front/points
+    cloud_in3_topic: /rear/points
+    cloud_out_topic: /combined_cloud

@@ -1,0 +1,18 @@
+material ArucoMarker1
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.0 1.0 1.0 1.0
+      diffuse 1.0 1.0 1.0 1.0
+      specular 0.0 0.0 0.0 1.0
+      
+      texture_unit
+      {
+        texture aruco_marker_1.png
+        filtering trilinear
+      }
+    }
+  }
+}

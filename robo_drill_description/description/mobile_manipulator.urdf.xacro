@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<robot name="mobile_manipulator" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:property name="M_PI" value="3.1415926535897931"/>
+
+    <!-- Arguments from launch file -->
+    <xacro:arg name="use_mock_hardware" default="false"/>
+    <xacro:arg name="simulation" default="false"/>
+    <xacro:arg name="ethercat_interface" default="eno1"/>
+    <xacro:arg name="ros_domain_id" default="1"/>
+    <xacro:arg name="base_only" default="false"/>
+    
+    <!-- UR Arm arguments -->
+    <xacro:arg name="ur_type" default="ur10e"/>
+    <xacro:arg name="tf_prefix" default="arm_"/>
+    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+    <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+    <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+    <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+    <xacro:arg name="transmission_hw_interface" default=""/>
+    <xacro:arg name="safety_limits" default="false"/>
+    <xacro:arg name="safety_pos_margin" default="0.15"/>
+    <xacro:arg name="safety_k_position" default="20"/>
+    
+    <!-- ros2_control parameters -->
+    <xacro:arg name="headless_mode" default="false"/>
+    <xacro:arg name="robot_ip" default="192.168.1.102"/>
+    <xacro:arg name="script_filename" default=""/>
+    <xacro:arg name="output_recipe_filename" default=""/>
+    <xacro:arg name="input_recipe_filename" default=""/>
+    <xacro:arg name="reverse_ip" default="0.0.0.0"/>
+    <xacro:arg name="script_command_port" default="50004"/>
+    <xacro:arg name="reverse_port" default="50001"/>
+    <xacro:arg name="script_sender_port" default="50002"/>
+    <xacro:arg name="trajectory_port" default="50003"/>
+    
+    <!-- Tool communication parameters -->
+    <xacro:arg name="use_tool_communication" default="false"/>
+    <xacro:arg name="tool_voltage" default="0"/>
+    <xacro:arg name="tool_parity" default="0"/>
+    <xacro:arg name="tool_baud_rate" default="115200"/>
+    <xacro:arg name="tool_stop_bits" default="1"/>
+    <xacro:arg name="tool_rx_idle_chars" default="1.5"/>
+    <xacro:arg name="tool_tx_idle_chars" default="3.5"/>
+    <xacro:arg name="tool_device_name" default="/tmp/ttyUR"/>
+    <xacro:arg name="tool_tcp_port" default="54321"/>
+    
+    <!-- Simulation parameters -->
+    <xacro:arg name="use_fake_hardware" default="false"/>
+    <xacro:arg name="fake_sensor_commands" default="false"/>
+    <xacro:arg name="sim_gazebo" default="false"/>
+    <xacro:arg name="sim_ignition" default="false"/>
+    <xacro:arg name="simulation_controllers" default="$(find arm_control)/config/ur_sim_controllers.yaml"/>
+    <xacro:arg name="arm_dyn_scale" default="0.003"/>
+    
+   <!-- End-effector cylinder parameters -->
+   <xacro:arg name="ee_cylinder_length" default="0.15"/>
+   <xacro:arg name="ee_cylinder_radius" default="0.035"/>
+   <xacro:arg name="sensors_offset" default="0.15"/>
+    
+    <!-- Initial positions for arm -->
+    <xacro:arg name="initial_positions_file" default="$(find arm_control)/config/initial_positions.yaml"/>
+    
+    <!-- Properties -->
+    <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
+    <xacro:property name="is_sim_gazebo" value="$(arg sim_gazebo)"/>
+    <xacro:property name="is_sim_ignition" value="$(arg sim_ignition)"/>
+    <xacro:property name="robot_id" value="$(arg ros_domain_id)"/>
+
+    
+    <xacro:include filename="robo_drill_colors.xacro"/>
+    <xacro:include filename="robo_drill_inertias.xacro"/>
+    <!-- <xacro:include filename="oliwall_base_links.xacro"/> -->
+    <xacro:include filename="oliwall_base.urdf"/>
+    <xacro:include filename="sick_multiscan.xacro"/>
+    <xacro:include filename="os-dome.xacro"/>
+    <xacro:include filename="realsense_camera.xacro"/>
+
+    <!-- Front-right Sick lidar -->
+    <xacro:sick_multiscan_sensor
+        parent_link="os_sensor_mount"
+        namespace="front"
+        sick_link="front_sick_scan" 
+        sick_scan_link="front_sick"
+        sick_imu_link="front_sick_imu"
+        origin_xyz="-0.002 0.243 -0.081"  
+        origin_rpy="1.130 0.938 1.453"
+    />
+
+    <!-- Sick lidar at back-left of robot -->
+    <xacro:sick_multiscan_sensor
+        parent_link="os_sensor_mount"
+        namespace="rear"
+        sick_link="rear_sick_scan"
+        sick_scan_link="rear_sick"
+        sick_imu_link="rear_sick_imu"
+        origin_xyz="-0.002 -0.252 -0.788"
+        origin_rpy="-1.98 -0.973 -1.496"
+
+    />
+
+    <!-- Add third sick lidar only in simulation -->
+    <xacro:if value="$(arg simulation)">
+        <xacro:sick_multiscan_sensor
+            parent_link="os_sensor_mount"
+            namespace="dome"
+            sick_link="os_lidar"
+            sick_scan_link="dome_scan"
+            sick_imu_link="dome_imu"
+            origin_xyz="0 0 0"
+            origin_rpy="0 0 0"
+
+        />
+    </xacro:if>
+    
+    
+    <!-- Front RealSense D435i (forward facing) - legacy frames/topics preserved -->
+    <xacro:realsense_d435
+        parent_link="os_sensor_mount"
+        camera_name="camera"
+        topic_ns="camera/camera"
+        origin_xyz="0.0075 -0.128 0.015"
+        origin_rpy="-2.998 -1.541 -0.145"
+    />
+
+    <!-- Rear RealSense D435i (back of turret, for localization and mapping) -->
+    <!-- TODO: replace origin with the measured pose of the rear camera on os_sensor_mount -->
+    <xacro:realsense_d435
+        parent_link="os_sensor_mount"
+        camera_name="camera_rear"
+        topic_ns="camera_rear"
+        origin_xyz="0.0075 0.128 -0.84"
+        origin_rpy="-0.143 1.541 -0.145"
+    />
+
+    <xacro:include filename="$(find arm_control)/urdf/ur_macro.xacro"/>
+    <!-- Mount UR10e arm on column_link -->
+    <xacro:ur_robot
+        name="$(arg ur_type)"
+        tf_prefix="$(arg tf_prefix)"
+        parent="column_link"
+        joint_limits_parameters_file="$(arg joint_limit_params)"
+        kinematics_parameters_file="$(arg kinematics_params)"
+        physical_parameters_file="$(arg physical_params)"
+        visual_parameters_file="$(arg visual_params)"
+        transmission_hw_interface="$(arg transmission_hw_interface)"
+        safety_limits="$(arg safety_limits)"
+        safety_pos_margin="$(arg safety_pos_margin)"
+        safety_k_position="$(arg safety_k_position)"
+        use_fake_hardware="$(arg use_fake_hardware)"
+        fake_sensor_commands="$(arg fake_sensor_commands)"
+        sim_gazebo="$(arg sim_gazebo)"
+        sim_ignition="$(arg sim_ignition)"
+        headless_mode="$(arg headless_mode)"
+        initial_positions="${xacro.load_yaml(initial_positions_file)}"
+        use_tool_communication="$(arg use_tool_communication)"
+        tool_voltage="$(arg tool_voltage)"
+        tool_parity="$(arg tool_parity)"
+        tool_baud_rate="$(arg tool_baud_rate)"
+        tool_stop_bits="$(arg tool_stop_bits)"
+        tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
+        tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
+        tool_device_name="$(arg tool_device_name)"
+        tool_tcp_port="$(arg tool_tcp_port)"
+        robot_ip="$(arg robot_ip)"
+        script_filename="$(arg script_filename)"
+        output_recipe_filename="$(arg output_recipe_filename)"
+        input_recipe_filename="$(arg input_recipe_filename)"
+        reverse_ip="$(arg reverse_ip)"
+        script_command_port="$(arg script_command_port)"
+        reverse_port="$(arg reverse_port)"
+        script_sender_port="$(arg script_sender_port)"
+        trajectory_port="$(arg trajectory_port)"
+        arm_dyn_scale="$(arg arm_dyn_scale)"
+        ee_cylinder_length="$(arg ee_cylinder_length)"
+        ee_cylinder_radius="$(arg ee_cylinder_radius)"
+        sensors_offset="$(arg sensors_offset)"
+    >
+        <!--! Arm mounting position  of arm_base_link relative to column_link -->
+        <origin xyz="0.0 0.0 0.73" 
+                rpy="0.0 0.0 -2.3562"/>
+    </xacro:ur_robot>
+
+    <xacro:include filename="$(find arm_control)/urdf/sensor_plate.urdf.xacro"/>
+    <xacro:sensor_plate
+     parent_link="$(arg tf_prefix)ee_cylinder_link"
+     tf_prefix="$(arg tf_prefix)"
+     ee_cylinder_length="$(arg ee_cylinder_length)"/>
+
+    <xacro:if value="$(arg sim_ignition)">
+        <gazebo>
+            <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+                <parameters>$(arg simulation_controllers)</parameters>
+                   <ros>
+                        <remapping>/diffbot_base_controller/odom:=/controller/odometry</remapping>
+                        <remapping>/odom:=/controller/odometry</remapping>
+                    </ros>
+            </plugin>
+        </gazebo>
+    </xacro:if>
+
+    <xacro:include filename="robodrill_diffdrive_control.xacro"/>
+
+</robot>
+    

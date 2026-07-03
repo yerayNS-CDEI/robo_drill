@@ -1,0 +1,111 @@
+# ros_gz_bridge configuration
+# Bridges Gz Sim topics to ROS 2 topics
+#
+# In Gz Sim, gpu_lidar publishes LaserScan on <topic> and
+# PointCloudPacked on <topic>/points (auto-generated subtopic).
+# Camera images are bridged via ros_gz_image for efficiency.
+
+# Clock (Gz -> ROS)
+- ros_topic_name: "clock"
+  gz_topic_name: "clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# Front Sick lidar - PointCloud2 (gpu_lidar publishes PointCloudPacked on /points subtopic)
+- ros_topic_name: "front/points"
+  gz_topic_name: "front/points/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+
+# Front Sick IMU
+- ros_topic_name: "front/imu"
+  gz_topic_name: "/front/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+# Rear Sick lidar - PointCloud2
+- ros_topic_name: "rear/points"
+  gz_topic_name: "rear/points/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+ 
+# Dome Sick lidar - PointCloud2 (simulation only)
+- ros_topic_name: "dome/points"
+  gz_topic_name: "dome/points/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# Camera color image (CameraInfo only - images bridged via ros_gz_image)
+- ros_topic_name: "camera/camera/color/camera_info"
+  gz_topic_name: "camera/camera/color/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Camera depth CameraInfo
+- ros_topic_name: "camera/camera/depth/camera_info"
+  gz_topic_name: "camera/camera/depth/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Rear camera color CameraInfo (CameraInfo only - images bridged via ros_gz_image)
+- ros_topic_name: "camera_rear/color/camera_info"
+  gz_topic_name: "camera_rear/color/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Rear camera depth CameraInfo
+- ros_topic_name: "camera_rear/depth/camera_info"
+  gz_topic_name: "camera_rear/depth/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# Ultrasonic sensors (gpu_lidar used as distance sensor)
+# NOTE: gz topic names must match the <topic> in sensor_plate.urdf.xacro
+# (/distance_sensors/sensor_A ...), not the short A/B/C used previously.
+- ros_topic_name: "distance_sensors/sensor_A"
+  gz_topic_name: "distance_sensors/sensor_A"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "distance_sensors/sensor_B"
+  gz_topic_name: "distance_sensors/sensor_B"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "distance_sensors/sensor_C"
+  gz_topic_name: "distance_sensors/sensor_C"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# ToF sensors (VL6180x), modeled as short-range gpu_lidar rays
+- ros_topic_name: "distance_sensors/sensor_D"
+  gz_topic_name: "distance_sensors/sensor_D"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "distance_sensors/sensor_E"
+  gz_topic_name: "distance_sensors/sensor_E"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "distance_sensors/sensor_F"
+  gz_topic_name: "distance_sensors/sensor_F"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS

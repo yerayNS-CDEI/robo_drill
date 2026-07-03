@@ -1,0 +1,33 @@
+robot_body_filter:
+  ros__parameters:
+    input_topic: /combined_cloud
+    output_topic: /combined_cloud_filtered
+
+    # Geometric inflation of each collision shape before testing containment.
+    # padding adds a uniform skin (meters); scale multiplies the shape.
+    # Bump padding if you see fringe self-points around mesh edges.
+    padding: 0.15
+    scale: 1.0
+
+     # Timeout for each per-link TF lookup. The node uses latest-transform
+    # (TimePointZero) lookups, so this is only relevant at startup before TF is
+    # populated. A link whose TF is unavailable is skipped for that cloud rather
+    # than dropping the whole cloud.
+    tf_timeout: 0.1
+
+    # Upper bound passed to ShapeMask. Points farther than this from the sensor
+    # are marked CLIP and skipped — they're never tested for self-containment.
+    # NOT a "disabled" sentinel: 0.0 here means everything is clipped and no
+    # filtering happens. Set to your lidar's max range (or larger).
+    max_sensor_dist: 2.0
+
+    # If true, keep the cloud organized (height x width) and replace masked
+    # points with NaN instead of compacting. Leave false for rtabmap.
+    keep_organized: false
+
+    # Link names to skip — useful for e.g. wheel meshes that overhang the floor
+    # and would over-eagerly carve ground returns. Default (no key) = filter
+    # every link with collision geometry. To skip links, uncomment and list:
+    #   exclude_links: ["wheel_left_link", "wheel_right_link"]
+    # (YAML `[]` is rejected by rclcpp Humble — must omit the key or use a
+    # non-empty list.)

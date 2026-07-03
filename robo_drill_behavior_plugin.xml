@@ -1,0 +1,21 @@
+<class_libraries>
+  <library path="robo_drill_back_out_behavior">
+    <class type="robo_drill::BackOutFromObstacle" base_class_type="nav2_core::Behavior">
+      <description>
+        Direction-aware recovery behavior that strafes the holonomic base away
+        from whatever the (arm-aware) footprint is wedged against, choosing the
+        clear side from the filtered pointcloud (MoveIt backend) or the local
+        costmap, until the footprint clears.
+      </description>
+    </class>
+  </library>
+  <library path="robo_drill_retract_arm_behavior">
+    <class type="robo_drill::RetractArmFromObstacle" base_class_type="nav2_core::Behavior">
+      <description>
+        Recovery behavior that frees the footprint by retracting the UR10e arm
+        (reducing reach and biasing the pan away from the obstacle) until the
+        footprint clears, instead of moving the base.
+      </description>
+    </class>
+  </library>
+</class_libraries>

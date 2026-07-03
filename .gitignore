@@ -1,0 +1,12 @@
+install/
+build/
+log/
+/**/*.db
+.vscode/
+*.pdf
+/**/*.stl
+/**/*.ply
+.codex
+/**/*__pycache__/
+**soem**
+/**/*.pyc

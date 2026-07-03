@@ -1,0 +1,12 @@
+# Goal
+# Cap on total shoulder-pan rotation (rad) used to bias the arm away from the
+# obstacle (prevents large/unsafe swings). <= 0 disables the pan bias.
+float32 max_pan_change
+# Maximum time allowed for the maneuver.
+builtin_interfaces/Duration time_allowance
+---
+# Result
+builtin_interfaces/Duration total_elapsed_time
+---
+# Feedback
+float32 footprint_cost

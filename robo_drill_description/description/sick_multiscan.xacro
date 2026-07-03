@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="sick_multiscan">
+
+    <!-- Macro to create a Sick Multiscan lidar -->
+    <xacro:macro name="sick_multiscan_sensor" params="
+        parent_link
+        namespace:='sick'
+        sick_link:='sick'
+        sick_scan_link:='sick_scan'
+        sick_imu_link:='sick_imu'
+        origin_xyz:='0 0 0'
+        origin_rpy:='0 0 0'
+        topic_points='/points'
+        topic_scan='/scan'
+        topic_imu='/imu'
+        ">
+
+    <!-- Optical and IMU properties -->
+    <xacro:property name="lidar_hz" value="10" />
+    <xacro:property name="imu_hz" value="30" />
+    <xacro:property name="num_lasers" value="16" />
+    <xacro:property name="samples" value="100" />
+    <xacro:property name="min_range" value="0.05" />
+    <xacro:property name="max_range" value="90" />
+    <xacro:property name="range_resolution" value="0.001" />
+    <xacro:property name="lidar_noise" value="0.005" />
+    <xacro:property name="imu_noise" value="0.005" />
+    <xacro:property name="min_angle" value="-${M_PI}" />
+    <xacro:property name="max_angle" value="${M_PI}" />
+    <xacro:property name="vfov_above" value="${22.5*M_PI/180}" />
+    <xacro:property name="vfov_below" value="${-22.5*M_PI/180}" />
+
+    <!-- Mechanical properties -->
+    <xacro:property name="lidar_mass" value="0.495" />
+    <xacro:property name="lidar_height" value="0.0985" />
+    <xacro:property name="lidar_diameter" value="0.1003" />
+
+    <!-- Define 3 links (sensor, lidar, imu) and their 3 joints -->
+    <link name="${sick_link}">
+        <xacro:cylinder_inertia m="${lidar_mass}" r="${lidar_diameter/2}" h="${lidar_height}">
+            <origin xyz="0 0 ${lidar_height/2}" rpy="0 0 0" />
+        </xacro:cylinder_inertia>
+        <collision name="base_collision">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="${lidar_diameter/2}" length="${lidar_height}" />
+            </geometry>
+        </collision>
+        <xacro:unless value="${sick_link == 'os_lidar'}">
+            <visual name="base_visual">
+                <origin xyz="0 0 -0.056" rpy="0 0 -1.57" />
+                <geometry>
+                    <mesh filename="package://robo_drill/robo_drill_description/meshes/sick.STL" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="bluish_grey">
+                    <color rgba="0.15 0.15 0.2 1.0"/>
+                </material>
+            </visual>
+        </xacro:unless>
+    </link>
+
+    <link name="${sick_scan_link}" />
+
+    <joint name="${sick_link}_joint" type="fixed">
+        <parent link="${parent_link}" />
+        <child link="${sick_link}" />
+        <origin xyz="${origin_xyz}" rpy="${origin_rpy}" />
+    </joint>
+
+    <joint name="${sick_scan_link}_joint" type="fixed">
+        <parent link="${sick_link}" />
+        <child link="${sick_scan_link}" />
+        <origin xyz="0.0 0.0 -0.05655" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <!-- Lidar PointCloud2 - Gz Sim GPU lidar -->
+    <gazebo reference="${sick_link}">
+        <sensor type="gpu_lidar" name="${sick_link}">
+            <visualize>false</visualize>
+            <update_rate>${lidar_hz}</update_rate>
+            <topic>/${namespace}${topic_points}</topic>
+            <gz_frame_id>${sick_link}</gz_frame_id>
+            <lidar>
+                <scan>
+                    <horizontal>
+                        <samples>${samples}</samples>
+                        <resolution>1</resolution>
+                        <min_angle>${min_angle}</min_angle>
+                        <max_angle>${max_angle}</max_angle>
+                    </horizontal>
+                    <vertical>
+                        <samples>${num_lasers}</samples>
+                        <resolution>1</resolution>
+                        <min_angle>${vfov_below}</min_angle>
+                        <max_angle>${vfov_above}</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>${min_range}</min>
+                    <max>${max_range}</max>
+                    <resolution>${range_resolution}</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>${lidar_noise}</stddev>
+                </noise>
+            </lidar>
+        </sensor>
+    </gazebo>
+
+    <!-- LaserScan - Gz Sim GPU lidar (2D) -->
+    <gazebo reference="${sick_scan_link}">
+        <sensor name="${sick_scan_link}" type="gpu_lidar">
+            <always_on>true</always_on>
+            <visualize>false</visualize>
+            <update_rate>${lidar_hz}</update_rate>
+            <topic>/${namespace}${topic_scan}</topic>
+            <gz_frame_id>${sick_scan_link}</gz_frame_id>
+            <lidar>
+                <scan>
+                    <horizontal>
+                        <samples>${samples}</samples>
+                        <resolution>1</resolution>
+                        <min_angle>${min_angle}</min_angle>
+                        <max_angle>${max_angle}</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>${min_range}</min>
+                    <max>${max_range}</max>
+                    <resolution>${range_resolution}</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>${lidar_noise}</stddev>
+                </noise>
+            </lidar>
+        </sensor>
+    </gazebo>
+
+    <!-- IMU - Gz Sim IMU sensor -->
+    <gazebo reference="${sick_link}">
+        <sensor name="${sick_imu_link}" type="imu">
+            <always_on>true</always_on>
+            <update_rate>${imu_hz}</update_rate>
+            <topic>/${namespace}${topic_imu}</topic>
+            <gz_frame_id>${sick_link}</gz_frame_id>
+            <imu>
+                <angular_velocity>
+                    <x><noise type="gaussian"><mean>0.0</mean><stddev>${imu_noise}</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0.0</mean><stddev>${imu_noise}</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0.0</mean><stddev>${imu_noise}</stddev></noise></z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x><noise type="gaussian"><mean>0.0</mean><stddev>${imu_noise}</stddev></noise></x>
+                    <y><noise type="gaussian"><mean>0.0</mean><stddev>${imu_noise}</stddev></noise></y>
+                    <z><noise type="gaussian"><mean>0.0</mean><stddev>${imu_noise}</stddev></noise></z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
+
+    </xacro:macro>
+
+</robot>

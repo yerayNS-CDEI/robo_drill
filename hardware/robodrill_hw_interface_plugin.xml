@@ -1,0 +1,9 @@
+<library path="robodrill_hw_interface">
+  <class name="robodrill_hw_interface/RobodrillHardwareInterface"
+         type="robodrill_hw_interface::RobodrillHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      The ROS 2 control hardware interface for the Robo Drill robot platform. Supports velocity commands and position/velocity state feedback, and is extendable beyond differential-drive configurations.
+    </description>
+  </class>
+</library>

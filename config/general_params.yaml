@@ -1,0 +1,35 @@
+turret_joy:
+  ros__parameters:
+    min_turret_speed: 1.0
+    max_turret_speed: 10.0
+
+teleop_twist_joy_node:
+    ros__parameters:
+      axis_linear: # Left thumb stick vertical
+        x: 1
+      scale_linear:
+        x: 0.15
+      scale_linear_turbo:
+        x: 0.8
+
+      axis_angular: # Left thumb stick horizontal
+        yaw: 0
+      scale_angular:
+        yaw: 0.4
+      scale_angular_turbo:
+        yaw: 0.5
+
+      enable_button: 0  # Left trigger button
+      enable_turbo_button: 5  # Right trigger button
+
+twist_mux:
+  ros__parameters:
+    topics:
+      navigation:
+        topic   : cmd_vel
+        timeout : 0.5
+        priority: 10
+      joystick:
+        topic   : cmd_vel_joy
+        timeout : 0.5
+        priority: 100

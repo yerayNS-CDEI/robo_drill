@@ -1,0 +1,467 @@
+amcl:
+  ros__parameters:
+    use_sim_time: True
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+    base_frame_id: "turret_footprint"
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    global_frame_id: "map"
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 100.0
+    laser_min_range: -1.0
+    laser_model_type: "likelihood_field"
+    max_beams: 60
+    max_particles: 2000
+    min_particles: 500
+    odom_frame_id: "odom"
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: "nav2_amcl::OmniMotionModel"
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.2
+    update_min_d: 0.25
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    scan_topic: /scan
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: turret_footprint
+    odom_topic: /rtabmap/odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
+    # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
+    # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
+    # default_nav_to_pose_bt_xml: "$(find-pkg-share robo_drill)/config/navigate_w_replanning_only_if_goal_is_updated.xml"
+    # default_nav_to_pose_bt_11xml: /opt/ros/humble/share/nav2_bt_navigator/behavior_trees/navigate_w_replanning_only_if_goal_is_updated.xml
+      # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+    # Recovery tree that tries the direction-aware BackOutFromObstacle escape
+    # first (see config/behavior_trees/). Expanded by RewrittenYaml(allow_substs=True).
+    default_nav_to_pose_bt_xml: "$(find-pkg-share robo_drill)/config/behavior_trees/navigate_to_pose_w_backout_recovery.xml"
+    plugin_lib_names:
+      - nav2_compute_path_to_pose_action_bt_node
+      - nav2_compute_path_through_poses_action_bt_node
+      - nav2_smooth_path_action_bt_node
+      - nav2_follow_path_action_bt_node
+      - nav2_spin_action_bt_node
+      - nav2_wait_action_bt_node
+      - nav2_assisted_teleop_action_bt_node
+      - nav2_back_up_action_bt_node
+      - robo_drill_retract_arm_bt_node
+      - robo_drill_back_out_bt_node
+      - nav2_drive_on_heading_bt_node
+      - nav2_clear_costmap_service_bt_node
+      - nav2_is_stuck_condition_bt_node
+      - nav2_goal_reached_condition_bt_node
+      - nav2_goal_updated_condition_bt_node
+      - nav2_globally_updated_goal_condition_bt_node
+      - nav2_is_path_valid_condition_bt_node
+      - nav2_initial_pose_received_condition_bt_node
+      - nav2_reinitialize_global_localization_service_bt_node
+      - nav2_rate_controller_bt_node
+      - nav2_distance_controller_bt_node
+      - nav2_speed_controller_bt_node
+      - nav2_truncate_path_action_bt_node
+      - nav2_truncate_path_local_action_bt_node
+      - nav2_goal_updater_node_bt_node
+      - nav2_recovery_node_bt_node
+      - nav2_pipeline_sequence_bt_node
+      - nav2_round_robin_node_bt_node
+      - nav2_transform_available_condition_bt_node
+      - nav2_time_expired_condition_bt_node
+      - nav2_path_expiring_timer_condition
+      - nav2_distance_traveled_condition_bt_node
+      - nav2_single_trigger_bt_node
+      - nav2_goal_updated_controller_bt_node
+      - nav2_is_battery_low_condition_bt_node
+      - nav2_navigate_through_poses_action_bt_node
+      - nav2_navigate_to_pose_action_bt_node
+      - nav2_remove_passed_goals_action_bt_node
+      - nav2_planner_selector_bt_node
+      - nav2_controller_selector_bt_node
+      - nav2_goal_checker_selector_bt_node
+      - nav2_controller_cancel_bt_node
+      - nav2_path_longer_on_approach_bt_node
+      - nav2_wait_cancel_bt_node
+      - nav2_spin_cancel_bt_node
+      - nav2_back_up_cancel_bt_node
+      - nav2_assisted_teleop_cancel_bt_node
+      - nav2_drive_on_heading_cancel_bt_node
+      - nav2_is_battery_charging_condition_bt_node
+
+bt_navigator_navigate_through_poses_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+bt_navigator_navigate_to_pose_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    use_realtime_priority: true
+    # controller server parameters (see Controller Server for more info)
+    controller_frequency: 10.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.001
+    min_theta_velocity_threshold: 0.001
+    progress_checker_plugins: ["progress_checker"] # progress_checker_plugin: "progress_checker" For Humble and older
+    goal_checker_plugins: ["goal_checker"]
+    controller_plugins: ["FollowPath"]
+    odom_topic: "/rtabmap/odom"
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 5.0
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      # Strict defaults for localization. navigation_launch.py overrides these per-launch
+      # (looser during exploration mapping) via RewrittenYaml param_rewrites.
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+      stateful: True
+    # DWB controller parameters
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: True
+      min_vel_x: -0.26
+      min_vel_y: -0.26
+      max_vel_x: 0.26
+      max_vel_y: 0.26
+      # Capped to ~ the turret's real angular capability (max_angular_turret 0.35 in
+      # diffdrive_controllers.yaml). At 1.0, DWB commanded wz the turret could not realize
+      # and rotated the turret_footprint (turret swung with the chassis = "diff-drive" look).
+      max_vel_theta: 0.4
+      min_speed_xy: -0.26
+      max_speed_xy: 0.26
+      min_speed_theta: -0.4
+      acc_lim_x: 1.5
+      acc_lim_y: 1.5
+      acc_lim_theta: 3.2
+      decel_lim_x: -1.5
+      decel_lim_y: -1.5
+      decel_lim_theta: -3.2
+      # 10x20x10=2000 trajectories. Higher vy_samples (strafe resolution) lets the holonomic
+      # base follow curved paths by STRAFING (turret stays fixed in map) instead of rotating
+      # to face the path like a diff-drive. Kept well under the ~8000 that overloaded the
+      # 100 ms control budget with the polygon ObstacleFootprint critic.
+      vx_samples: 10
+      vy_samples: 20
+      vtheta_samples: 10
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: True
+      limit_vel_cmd_in_traj: False    ###
+      stateful: True
+      # ObstacleFootprint tests the full (dynamic, arm-aware) footprint polygon
+      # against the costmap, unlike BaseObstacle which only scored the robot center cell.
+      critics: ["RotateToGoal", "Oscillation", "ObstacleFootprint", "GoalAlign", "PathAlign", "PathDist", "GoalDist", "Twirling"]
+      # scale 0.02 (nav2 default), NOT 32. ObstacleFootprint reads the whole footprint over
+      # the inflation gradient, so any forward motion sweeps the big arm footprint into higher
+      # cost (raw 1 -> 12). At scale 32 that increase alone exceeded the standstill total and,
+      # with short_circuit_trajectory_evaluation on, every motion lost to standing still.
+      # The hard collision INVALIDATION (arm-collision avoidance) is independent of scale, so a
+      # low scale keeps the arm safe while letting the goal/path critics drive motion.
+      ObstacleFootprint.scale: 0.02
+      # PathAlign/GoalAlign rotate the robot to FACE the path/goal direction - exactly the
+      # diff-drive heading behavior we do NOT want for a turret that should hold its map
+      # heading. Disabled so the base follows the path by position (PathDist/GoalDist) while
+      # strafing, leaving the turret fixed. Final goal orientation is still set by RotateToGoal.
+      PathAlign.scale: 0.0
+      GoalAlign.scale: 0.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 100.0
+      GoalDist.scale: 2.4
+      RotateToGoal.scale: 3.2
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+      # Twirling penalizes rotational velocity (holonomic-specific) - raised to further
+      # discourage spinning the turret_footprint, reinforcing strafe-to-follow behavior.
+      Twirling.scale: 10.0
+      # NOTE: "OScilation" is a typo (critic is "Oscillation"), so this line is ignored and
+      # the Oscillation critic uses its default scale. Left as-is to avoid behavior change.
+      OScilation.scale: 2.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: turret_footprint
+      use_sim_time: True
+      rolling_window: true
+      # 6x6 (was 4x4): the arm reaches ~1.8 m, so a +/-2 m window clipped the arm tip and
+      # the wall just beyond it. +/-3 m keeps the bulge and the obstacle ahead of it in view.
+      width: 6
+      height: 6
+      resolution: 0.05
+      # Default base footprint (octagon ~0.6 m) instead of robot_radius so the costmap
+      # runs in polygon mode (use_radius_=false). This lets SmacPlannerHybrid and the DWB
+      # ObstacleFootprint critic collision-check the actual polygon. The dynamic footprint
+      # publisher overrides these points at runtime with the arm-aware shape.
+      footprint: "[ [0.6, 0.0], [0.424, 0.424], [0.0, 0.6], [-0.424, 0.424], [-0.6, 0.0], [-0.424, -0.424], [0.0, -0.6], [0.424, -0.424] ]"
+      footprint_padding: 0.0
+      plugins: ["obstacle_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 10.0 # determines how quickly cost decrease as you move away from an obstacle. A bigger value means the cost decreases very quickly
+        inflation_radius: 1.0
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        # The source name MUST match the parameter block below ("scan"). Previously this
+        # was "pointcloud", which didn't match the "scan" block, so the layer subscribed to
+        # a nonexistent "pointcloud" topic and the local costmap stayed empty (no obstacle
+        # marking at all -> footprint/arm avoidance had nothing to react to).
+        observation_sources: scan
+        # Disabled: an arm-extended footprint would otherwise clear (erase) obstacles
+        # such as columns that fall under the arm bulge.
+        footprint_clearing_enabled: false
+        scan:
+          topic: /combined_cloud_filtered
+          data_type: "PointCloud2"
+          min_obstacle_height: 0.1
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          obstacle_max_range: 8.0
+          obstacle_min_range: 0.0
+          raytrace_max_range: 20.0
+          raytrace_min_range: 0.0
+          inf_is_valid: False     
+          expected_update_rate: 0.0
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: map
+      robot_base_frame: turret_footprint
+      use_sim_time: True
+      # NavFn is point-based, so the global costmap stays circular here. The dynamic
+      # arm footprint is applied only at the local costmap (see below), avoiding global
+      # start-in-collision failures while still reacting to the arm during motion.
+      robot_radius: 0.6
+      footprint_padding: 0.0
+      resolution: 0.05
+      track_unknown_space: true
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        # Disabled: avoid clearing obstacles that fall under the arm-extended footprint.
+        footprint_clearing_enabled: False
+        observation_sources: scan
+        scan:
+          topic: /combined_cloud_filtered
+          max_obstacle_height: 2.0
+          min_obstacle_height: 0.03
+          clearing: True
+          marking: False
+          data_type: "PointCloud2"
+          raytrace_max_range: 30.0
+          raytrace_min_range: 0.20
+          obstacle_max_range: 30.0
+          obstacle_min_range: 0.20
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 10.0 # determines how quickly cost decrease as you move away from an obstacle. A bigger value means the cost decreases very quickly
+        inflation_radius: 1.0
+      always_send_full_costmap: True
+
+map_server:
+  ros__parameters:
+    use_sim_time: True
+    # Overridden in launch by the "map" launch configuration or provided default value.
+    # To use in yaml, remove the default "map" value in the tb3_simulation_launch.py file & provide full path to map below.
+    yaml_filename: ""
+
+map_saver:
+  ros__parameters:
+    use_sim_time: True
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: True
+
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 10.0
+    use_sim_time: True
+    planner_plugins: ["GridBased"]
+    # NavFn (point + inflation) is intentionally kept for global planning: it tolerates a
+    # start pose inside inflated/inscribed cost, which is the norm for this wall-working
+    # robot (parks close to columns, often with the arm extended). A footprint-checking
+    # global planner (Smac) rejects such starts with "Starting point in lethal space".
+    # Arm-aware collision avoidance is enforced at the local layer instead: the dynamic
+    # footprint on the local costmap + the DWB ObstacleFootprint critic.
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+
+smoother_server:
+  ros__parameters:
+    use_sim_time: True
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: True
+
+behavior_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["retract_arm_from_obstacle", "back_out_from_obstacle", "spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    # Least-disruptive escape (tried first): retract the UR10e arm until the
+    # footprint clears - fold reach toward the compact home shape and bias the
+    # shoulder pan away from the obstacle by a capped amount.
+    retract_arm_from_obstacle:
+      plugin: "robo_drill::RetractArmFromObstacle"
+      costmap_frame: "odom"
+      search_radius: 2.0
+      obstacle_cost_min: 128
+      clear_cost_threshold: 50.0
+      # Route the retraction through the arm planner (not the controller directly),
+      # so motion is collision-aware and at the planner's max_velocity_scaling.
+      # Driven by the launch's planner_backend arg (RewrittenYaml allow_substs):
+      # "moveit" (joint goal) retracts the arm; "legacy" hands off to base recovery.
+      planner_backend: "$(var planner_backend)"
+      # Phase 1: reorient the arm by spinning the shoulder pan toward the clear
+      # side (keeps reach) before folding. Fold is the fallback if the spin
+      # can't clear it.
+      prefer_pan_spin: true
+      fold_fallback: true
+      joint_goal_topic: "/arm/joint_goal"
+      cancel_service: "/emergency_stop"
+      execution_status_topic: "/execution_status"
+      goal_failed_topic: "/planner/goal_failed"
+      joint_states_topic: "/joint_states"
+      # pan, lift, elbow, wrist_1, wrist_2, wrist_3
+      arm_joints: ["arm_shoulder_pan_joint", "arm_shoulder_lift_joint", "arm_elbow_joint", "arm_wrist_1_joint", "arm_wrist_2_joint", "arm_wrist_3_joint"]
+      arm_mount_yaw: -2.3562
+      # Compact "home" shape to fold reach toward (from arm_control initial_positions).
+      # The goal cancels the instant the footprint clears (minimal retraction).
+      home_lift: -1.2
+      home_elbow: -2.3
+      # Pan-spin direction: the current arm-tip azimuth is read from the actual
+      # arm_tool0 TF (not an analytic formula). pan_joint_sign maps a +pan command
+      # to +/- world azimuth; if the first spin makes the footprint worse or the
+      # planner refuses it, the behavior reverses direction once, then folds.
+      tip_frame: "arm_tool0"
+      pan_joint_sign: 1.0
+      # Pan-spin also retracts the arm: raise the shoulder lift toward vertical
+      # (upper arm up, +z of map) while the forearm (elbow) counter-rotates so the
+      # arm folds inward instead of swinging its reach out. The motion is bounded
+      # and cancels the instant the footprint clears.
+      #  - pan_spin_lift_vertical: lift value at vertical (UR10e: -pi/2).
+      #  - pan_spin_lift_step:     max raise per goal (rad).
+      #  - max_lift_raise:         max TOTAL raise above the arm's resting lift, so
+      #                            it doesn't keep creeping up on every obstacle.
+      #  - elbow_lift_coupling:    forearm counter-rotation per unit lift raise.
+      pan_spin_lift_vertical: -1.5708
+      pan_spin_lift_step: 0.7854
+      max_lift_raise: 0.8
+      elbow_lift_coupling: 1.0
+    # Second escape (after the arm retract): strafe the holonomic base away from
+    # the obstacle. With the MoveIt backend it picks the clear side from the
+    # robot-body-filtered pointcloud (cloud_topic); otherwise it falls back to a
+    # cost-weighted repulsive vector over the local costmap.
+    back_out_from_obstacle:
+      plugin: "robo_drill::BackOutFromObstacle"
+      costmap_frame: "odom"
+      search_radius: 2.0
+      obstacle_cost_min: 128
+      clear_cost_threshold: 50.0
+      forward_check_dist: 0.15
+      # Driven by the launch's planner_backend arg (RewrittenYaml allow_substs).
+      # "moveit": use the filtered pointcloud to choose the escape side.
+      planner_backend: "$(var planner_backend)"
+      cloud_topic: "/combined_cloud_filtered"
+      # Only cloud points in this height band (costmap_frame z, ~floor=0) count
+      # as obstacles to push away from - skips the floor and overhead structure.
+      cloud_min_z: 0.1
+      cloud_max_z: 2.0
+    spin:
+      plugin: "nav2_behaviors/Spin"
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    assisted_teleop:
+      plugin: "nav2_behaviors/AssistedTeleop"
+    global_frame: map
+    local_frame: odom
+    robot_base_frame: turret_footprint
+    transform_tolerance: 0.1
+    use_sim_time: true
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+robot_state_publisher:
+  ros__parameters:
+    use_sim_time: True
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: True
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: True
+      waypoint_pause_duration: 200
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: True
+    smoothing_frequency: 20.0
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.3, 0.3, 0.2]
+    min_velocity: [-0.3, -0.3, -0.2]
+    max_accel: [0.3, 0.3, 0.3]
+    max_decel: [-0.3, -0.3, -0.3]
+    odom_topic: "/rtabmap/odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0

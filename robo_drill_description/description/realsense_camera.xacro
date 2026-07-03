@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!--
+Aknolegment: This file was originally copied from the realsense repository of
+pal-robotics-forks( https://github.com/pal-robotics-forks/realsense/ )
+and then modified.
+
+License: Apache 2.0. See LICENSE file in root directory.
+Copyright(c) 2017 PAL Robotics, S.L. All Rights Reserved
+
+This is the Gazebo URDF model for the Intel RealSense D435i camera, wrapped as a
+reusable macro so it can be instantiated once per physical camera.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!--
+    Macro to create an Intel RealSense D435i camera (visual + Gz Sim RGBD sensor).
+
+    Frames are derived from camera_name:
+        ${camera_name}_link                 (camera body)
+        ${camera_name}_color_optical_frame  (REP-103 optical frame, simulation only)
+
+    ROS topics are derived from topic_ns:
+        ${topic_ns}/color/image_raw
+        ${topic_ns}/depth/image_rect_raw
+    -->
+    <xacro:macro name="realsense_d435" params="
+        parent_link
+        camera_name:='camera'
+        topic_ns:='camera/camera'
+        origin_xyz:='0 0 0'
+        origin_rpy:='0 0 0'
+        align_depth:='false'
+        ">
+
+        <!-- Derived frame names -->
+        <xacro:property name="camera_link"   value="${camera_name}_link" />
+        <xacro:property name="optical_frame" value="${camera_name}_color_optical_frame" />
+
+        <!-- Image stream properties -->
+        <xacro:property name="deg_to_rad"   value="0.01745329251994329577"/>
+        <xacro:property name="clip_distance" value="-1"/>
+        <xacro:property name="depth_width"  value="320"/>
+        <xacro:property name="depth_height" value="240"/>
+        <xacro:property name="depth_fps"    value="30"/>
+        <xacro:property name="color_width"  value="640"/>
+        <xacro:property name="color_height" value="480"/>
+        <xacro:property name="color_fps"    value="30"/>
+
+        <link name="${camera_link}">
+            <visual>
+                <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
+                <geometry>
+                    <mesh filename="package://robo_drill/robo_drill_description/meshes/d435.STL"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision name="${camera_name}_collision">
+                <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
+                <geometry>
+                    <box size="0.02505 0.090 0.025"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <mass value="0.564"/>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="0.001" ixy="0.000" ixz="0.000" iyy="0.001" iyz="0.000" izz="0.001"/>
+            </inertial>
+        </link>
+
+        <joint name="${camera_name}_joint" type="fixed">
+            <parent link="${parent_link}"/>
+            <child link="${camera_link}"/>
+            <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+        </joint>
+
+        <xacro:if value="$(arg simulation)">
+            <link name="${optical_frame}"/>
+            <joint name="${camera_name}_color_optical_joint" type="fixed">
+                <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+                <parent link="${camera_link}" />
+                <child link="${optical_frame}" />
+            </joint>
+        </xacro:if>
+
+        <gazebo reference="${camera_link}">
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <mu2>1</mu2>
+            <fdir1>0 0 0</fdir1>
+            <kp>1e+13</kp>
+            <kd>1</kd>
+
+            <!-- Color camera sensor -->
+            <sensor name="${camera_name}_color" type="camera">
+                <camera name="${camera_name}">
+                    <horizontal_fov>${69.4*deg_to_rad}</horizontal_fov>
+                    <image>
+                        <width>${color_width}</width>
+                        <height>${color_height}</height>
+                        <format>RGB_INT8</format>
+                    </image>
+                    <clip>
+                        <near>0.05</near>
+                        <far>8</far>
+                    </clip>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.007</stddev>
+                    </noise>
+                </camera>
+                <always_on>1</always_on>
+                <update_rate>${color_fps}</update_rate>
+                <visualize>1</visualize>
+                <topic>${topic_ns}/color/image_raw</topic>
+                <gz_frame_id>${optical_frame}</gz_frame_id>
+            </sensor>
+
+            <!-- Depth camera sensor -->
+            <sensor name="${camera_name}_depth" type="depth_camera">
+                <camera name="${camera_name}">
+                    <xacro:unless value="${align_depth}">
+                        <horizontal_fov>${85.2*deg_to_rad}</horizontal_fov>
+                        <image>
+                            <width>${depth_width}</width>
+                            <height>${depth_height}</height>
+                            <format>R_FLOAT32</format>
+                        </image>
+                    </xacro:unless>
+                    <xacro:if value="${align_depth}">
+                        <horizontal_fov>${69.4*deg_to_rad}</horizontal_fov>
+                        <image>
+                            <width>${color_width}</width>
+                            <height>${color_height}</height>
+                            <format>R_FLOAT32</format>
+                        </image>
+                    </xacro:if>
+                    <clip>
+                        <near>0.1</near>
+                        <xacro:unless value="${clip_distance > 0.0}">
+                            <far>100</far>
+                        </xacro:unless>
+                        <xacro:if value="${clip_distance > 0.0}">
+                            <far>${clip_distance}</far>
+                        </xacro:if>
+                    </clip>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.100</stddev>
+                    </noise>
+                </camera>
+                <always_on>1</always_on>
+                <xacro:unless value="${align_depth}">
+                    <update_rate>${depth_fps}</update_rate>
+                </xacro:unless>
+                <xacro:if value="${align_depth}">
+                    <update_rate>${color_fps}</update_rate>
+                </xacro:if>
+                <visualize>false</visualize>
+                <xacro:unless value="${align_depth}">
+                    <topic>${topic_ns}/depth/image_rect_raw</topic>
+                    <gz_frame_id>${optical_frame}</gz_frame_id>
+                </xacro:unless>
+                <xacro:if value="${align_depth}">
+                    <topic>${topic_ns}/aligned_depth_to_color/image_raw</topic>
+                    <gz_frame_id>${optical_frame}</gz_frame_id>
+                </xacro:if>
+            </sensor>
+
+        </gazebo>
+
+    </xacro:macro>
+
+</robot>

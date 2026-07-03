@@ -1,0 +1,78 @@
+/**:
+  ros__parameters:
+    robot_base_frame: base_footprint
+    return_to_init: true
+    costmap_topic: map
+    costmap_updates_topic: map_updates
+    visualize: true
+
+    # Watchdog frequency. Goals are now committed (see commit-to-goal logic), so
+    # the timer no longer preempts Nav2 every tick; ~1 Hz is responsive & safe.
+    planner_frequency: 1.0
+    # Time without getting closer to the goal before it is blacklisted & we replan.
+    progress_timeout: 30.0
+
+    # --- Frontier selection (distance-dominant) ---
+    # cost = potential_scale * min_distance(m) - gain_scale * min(size,cap)(cells) * res
+    # potential_scale >> gain_scale => the robot prefers the NEAREST frontier.
+    potential_scale: 5.0
+    orientation_scale: 0.0
+    gain_scale: 1.0
+    transform_tolerance: 0.3
+    # Smaller -> catches narrow openings in cluttered rooms.
+    min_frontier_size: 0.5
+    # Cap (cells) on the size bonus so a huge frontier can't beat a near one. At
+    # cap=30, res=0.05 the size bonus saturates at 30*0.05=1.5; divided by
+    # potential_scale that's only ~0.3 m of distance -> size only breaks ties.
+    frontier_size_cap: 30.0
+
+    # --- Robustness: keep goals off walls (raw /map has no inflation) ---
+    # Min clearance (m) a projected goal must keep from lethal cells. Matched to
+    # the robot radius (0.6) so the goal lands in space Nav2 can actually plan to
+    # and the controller can follow without stalling in inflated cost.
+    min_obstacle_clearance: 0.6
+    # How far (m) to search around a frontier for a clearance-safe free point.
+    clearance_search_radius: 1.0
+
+    # --- Footprint rejection (don't send goals the robot is already on) ---
+    # Inflated footprint radius (m). Frontiers whose projected goal is closer than
+    # this to the robot are skipped (a goal inside the footprint is a no-op Nav2
+    # reports "reached" without moving, so the map never grows). When ONLY such
+    # frontiers exist (typical at startup), a goal is synthesized just beyond this
+    # radius toward the nearest frontier so the robot starts moving. Set to the
+    # robot radius (0.6) + a small margin.
+    min_goal_distance: 0.7
+    # Radius (m) around the robot whose UNKNOWN cells are forced to free before
+    # frontier search, so no frontier is ever detected on/under the robot (the
+    # space it occupies is necessarily free). Genuine obstacles are left intact.
+    # Set to the robot/footprint radius (0.6); 0 disables.
+    footprint_clearing_radius: 0.6
+    # Startup grace (s): right after launch the costmap is mostly unknown, so a
+    # transient "no frontiers" result must not permanently end exploration. Until
+    # the first goal is sent, an empty result only stops exploration once this
+    # much time has elapsed (otherwise we just wait for the map to grow).
+    startup_timeout: 30.0
+
+    # --- Blacklist (time-expiring) ---
+    # A failed goal is avoided within this radius (m) ...
+    blacklist_radius: 0.75
+    # ... but becomes eligible again after this many seconds.
+    blacklist_expiry: 30.0
+
+    # --- Commit-to-goal ---
+    # Switch to a new frontier mid-goal only if it is this fraction of the current
+    # goal distance or closer (0.0 = never switch early; strictest commitment).
+    # Set to 0.0 on purpose: once a goal is active the robot commits to it and does
+    # NOT preempt for a better-scored/closer frontier. The active goal is only
+    # abandoned when it finishes (Nav2 SUCCEEDED), fails (Nav2 ABORTED or no progress
+    # for progress_timeout), or its backing frontier is explored away/blacklisted.
+    # This stops the robot swinging between frontiers as scores fluctuate.
+    switch_ratio: 0.0
+    # When false, the robot ALWAYS drives the active goal to a terminal result
+    # (Nav2 reached/aborted) or a stall (progress_timeout) before replanning - it is
+    # NOT abandoned mid-transit just because its backing frontier got explored away
+    # or blacklisted. Set true to restore replanning as soon as the goal is
+    # invalidated. Combined with switch_ratio: 0.0 this gives full goal commitment.
+    replan_on_invalid_goal: false
+    # Face the unexplored frontier on arrival (better sensor coverage).
+    goal_orientation_to_frontier: true

@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- Define robot constants -->
+    <xacro:property name="turret_height" value="0.162"/>
+    <xacro:property name="bar_thickness" value="0.04"/>
+    <xacro:property name="wheel_radius" value="0.125"/>
+    <xacro:property name="wheel_zoff" value="0.05"/>
+    <xacro:property name="friction_coefficient_1" value="10"/>
+    <xacro:property name="friction_coefficient_2" value="10"/>
+    <xacro:property name="support_height" value="0.509"/>
+
+    <!--    base link-->
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/base_link.STL"/>
+            </geometry>
+            <material name="green"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/base_link.STL"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="-0.17165 1.6409E-07 0.20767" rpy="0 0 0"/>
+            <mass value="205.75322253489"/>
+            <inertia
+                    ixx="11.009"
+                    ixy="-1.3566E-05"
+                    ixz="1.5177"
+                    iyy="17.358"
+                    iyz="8.228E-06"
+                    izz="22.951"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="base_link">
+    </gazebo>
+
+    <!-- Turret link -->
+    <link name="turret_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/turret_link.STL"/>
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/turret_link.STL"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="-7.9119E-08 0.00055954 -0.00081615" rpy="0 0 0"/>
+            <mass value="132.57"/>
+            <inertia
+                    ixx="9.017"
+                    ixy="1.2768E-09"
+                    ixz="4.6709E-08"
+                    iyy="9.0171"
+                    iyz="-0.0018655"
+                    izz="17.448"/>
+        </inertial>
+
+    </link>
+
+    <gazebo reference="turret_link">
+    </gazebo>
+    
+    <!-- base_link to turret center  -->
+    <joint name="turret_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="turret_link"/>
+        <origin xyz="-0.226 0 0.4681 " rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="lidar_support_link">
+        <inertial>
+            <origin xyz="-0.0506041116867669 1.2490009027033E-14 -0.137752955099086" rpy="0 0 0"/>
+            <mass value="0.322551800252601"/>
+            <inertia
+                    ixx="0.00159851475248136"
+                    ixy="-3.56160413661488E-17"
+                    ixz="-0.000154603735003629"
+                    iyy="0.00134122357698014"
+                    iyz="-1.1418133464673E-17"
+                    izz="0.000967233017102162"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/lidar-link.STL"/>
+            </geometry>
+            <material name="">
+                <material name="yellow"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/lidar-link.STL"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="lidar_support_joint" type="fixed">
+        <!--   adding half turret height + aluminum bar thickness  +  support length to turret link in z-axis-->
+        <origin xyz="0.0 0.0 ${turret_height/2 + bar_thickness + support_height}" rpy="0 0 0.0"/>
+        <parent link="turret_link"/>
+        <child link="lidar_support_link"/>
+        <axis xyz="0 0 0"/>
+    </joint>
+
+    <!-- Robot Footprint -->
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_footprint"/>
+        <origin xyz="0.0 0.0 -${wheel_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <!--Right wheel    -->
+    <link name="drivewhl_r_joint_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/right_wheel_link.STL"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/right_wheel_link.STL"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="0 -5.5511E-17 -0.0094094" rpy="0 0 0"/>
+            <mass value="15.26"/>
+            <inertia
+                    ixx="0.17652"
+                    ixy="1.4258E-17"
+                    ixz="-2.3032E-18"
+                    iyy="0.17652"
+                    iyz="-4.6246E-18"
+                    izz="0.30424"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="drivewhl_r_joint_link">
+        <mu1 value="${friction_coefficient_1}"/>
+        <mu2 value="${friction_coefficient_2}"/>
+    </gazebo>
+
+    <joint name="drivewhl_r_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="drivewhl_r_joint_link"/>
+        <origin xyz="0 -0.31757 0" rpy="-1.5708 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <!-- Left wheel    -->
+    <link name="drivewhl_l_joint_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/left_wheel_link.STL"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/left_wheel_link.STL"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="-2.7756E-17 5.5511E-17 -0.0094094" rpy="0 0 0"/>
+            <mass value="15.26"/>
+            <inertia
+                    ixx="0.17652"
+                    ixy="-8.1863E-19"
+                    ixz="0"
+                    iyy="0.17652"
+                    iyz="6.7085E-18"
+                    izz="0.30424"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="drivewhl_l_joint_link">
+        <mu1 value="${friction_coefficient_1}"/>
+        <mu2 value="${friction_coefficient_2}"/>
+    </gazebo>
+
+    <joint name="drivewhl_l_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="drivewhl_l_joint_link"/>
+        <origin xyz="0 0.31757 0" rpy="-1.5708 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <!-- Caster Wheel -->
+    <link name="back_caster">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/caster_wheel_link.STL"/>
+            </geometry>
+            <material name="cyan"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/caster_wheel_link.STL"/>
+            </geometry>
+        </collision>
+
+        <inertial>
+            <origin xyz="0.07524 0.17287 1.4357E-07" rpy="0 0 0"/>
+            <mass value="6.74062536527573"/>
+            <inertia
+                    ixx="0.057604"
+                    ixy="-0.0074758"
+                    ixz="-4.0884E-08"
+                    iyy="0.05582"
+                    iyz="1.4163E-08"
+                    izz="0.062763"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="back_caster">
+        <!-- Defining caster wheel's friction coefficients for a smooth motion-->
+        <mu1 value="0.01"/>
+        <mu2 value="0.01"/>
+    </gazebo>
+
+    <joint name="caster_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="back_caster"/>
+        <origin xyz="-0.547 0 0.10752" rpy="-1.5708 0 0"/>
+    </joint>
+</robot>

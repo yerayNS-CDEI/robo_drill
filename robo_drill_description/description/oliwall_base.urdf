@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  xmlns:xacro="http://ros.org/wiki/xacro" name="Oliwall">
+
+  <!-- Define robot constants -->
+  <xacro:property name="turret_height" value="0.162"/>
+  <xacro:property name="bar_thickness" value="0.04"/>
+  <xacro:property name="wheel_radius" value="0.125"/>
+  <xacro:property name="wheel_zoff" value="0.05"/>
+  <xacro:property name="friction_coefficient_1" value="10"/>
+  <xacro:property name="friction_coefficient_2" value="10"/>
+  <xacro:property name="support_height" value="0.509"/>
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.0 0.0 0.0"
+        rpy="0 0 0" />
+      <mass value="30.0"/>
+      <inertia
+        ixx="0.5080847489159819"
+        ixy="2.8242648578224556e-14"
+        ixz="-0.006994219218769546"
+        iyy="0.8214117015994189"
+        iyz="-4.079580458555823e-16"
+        izz="1.00356044778484"/>
+    </inertial>
+    <visual>
+      <origin
+        xyz="0.167 0 0"
+        rpy="-1.5708 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/base.STL"  scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0.167 0 0"
+        rpy="-1.5708 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/base.STL"  scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="drivewhl_r_joint_link">
+    <inertial>
+      <origin
+        xyz="-2.77555756156289E-17 1.38777878078145E-17 -0.00433895556276356"
+        rpy="0 0 0" />
+      <mass
+        value="54.4811070994725" />
+      <inertia
+        ixx="0.271970071358888"
+        ixy="38.8229081044536E-18"
+        ixz="-98.2514219676396E-19"
+        iyy="0.271970071358888"
+        iyz="-14.835547965569E-18"
+        izz="0.406237456171365" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 1.5708 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/right_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.0 0.0 0.0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 1.5708 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/right_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="drivewhl_r_joint"
+    type="continuous">
+    <origin
+      xyz="0 -0.18275 0"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="drivewhl_r_joint_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit effort="500.0" velocity="50.0"/>
+  </joint>
+  <link
+    name="drivewhl_l_joint_link">
+    <inertial>
+      <origin
+        xyz="2.77555756156289E-17 0 -0.00433895556276352"
+        rpy="0 0 0" />
+      <mass
+        value="54.4811070994725" />
+      <inertia
+        ixx="0.271970071358888"
+        ixy="-21.0430159738359E-18"
+        ixz="23.1434079223426E-19"
+        iyy="0.271970071358888"
+        iyz="57.5967249283194E-19"
+        izz="0.406237456171365" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 -1.5708 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/left_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.0 0.0 0.0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 -1.5708 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/left_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="drivewhl_l_joint"
+    type="continuous">
+    <origin
+      xyz="0 0.18275 0"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="drivewhl_l_joint_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit effort="500.0" velocity="50.0"/>
+  </joint>
+  <link
+    name="turret_link">
+    <inertial>
+      <origin
+        xyz="0.05 0 0.05"
+        rpy="0 0 0" />
+      <mass value="10.0"/>
+      <inertia
+        ixx="0.625"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.875"
+        iyz="0.0"
+        izz="0.875"/>
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0.009"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/turret_textured.dae" />
+      </geometry>
+    </visual>
+    <!-- Fixed outer sleeve for the lifting column.
+         The prismatic child link is the moving inner column; this sleeve keeps the
+         structure visually connected when the column is extended. -->
+    <visual>
+      <origin
+        xyz="0.2905 0 0.45"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.10 0.12 0.9" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+              xyz="0 0 0.009"
+              rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/turret_textured.dae" scale="1.01 1.01 1.01"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="turret_joint"
+    type="continuous">
+    <origin
+      xyz="0.167 0 0.2575"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="turret_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+      <parent link="base_footprint"/>
+      <child link="base_link"/>
+      <origin xyz="-0.167 0.0 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Hidden support casters for Gazebo physics.
+       The full turret STL already contains the visible caster geometry, but
+       using that detailed mesh as the contact surface makes the turret legs
+       take the load before the drive wheels. These simple spheres provide
+       stable, low-friction support at the leg contact points. -->
+  <link name="turret_caster_fl">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_caster_fl_joint" type="fixed">
+    <origin xyz="-0.3848 0.2810 -0.335" rpy="0 0 0"/>
+    <parent link="turret_link"/>
+    <child link="turret_caster_fl"/>
+  </joint>
+
+  <link name="turret_caster_fr">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_caster_fr_joint" type="fixed">
+    <origin xyz="-0.3820 -0.2838 -0.335" rpy="0 0 0"/>
+    <parent link="turret_link"/>
+    <child link="turret_caster_fr"/>
+  </joint>
+
+  <link name="turret_caster_bl">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_caster_bl_joint" type="fixed">
+    <origin xyz="0.3820 0.2838 -0.335" rpy="0 0 0"/>
+    <parent link="turret_link"/>
+    <child link="turret_caster_bl"/>
+  </joint>
+
+  <link name="turret_caster_br">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.05"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.045"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="turret_caster_br_joint" type="fixed">
+    <origin xyz="0.3848 -0.2810 -0.335" rpy="0 0 0"/>
+    <parent link="turret_link"/>
+    <child link="turret_caster_br"/>
+  </joint>
+
+
+  
+  <link
+    name="column_link">
+    <inertial>
+      <origin
+        xyz="0 0 0.0"
+        rpy="0 0 0" />
+      <mass value="1.0"/>
+      <inertia
+        ixx="0.04494166666666667"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.044708333333333336"
+        iyz="0.0"
+        izz="0.0008333333333333334"/>
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0.365"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.10 0.12 0.73" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.8 0.8 0.8 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0.365"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.10 0.12 0.73" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="column_joint"
+    type="prismatic">
+    <origin
+      xyz="0.2905 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="turret_link" />
+    <child
+      link="column_link" />
+        <axis
+    xyz="0 0 1" />
+  <limit
+    lower="0.0"
+    upper="0.9"
+    effort="1000.0"
+    velocity="0.1" />
+  </joint>
+  <!-- Add Gazebo materials for the oliwall links -->
+  <gazebo reference="base_link">
+      <collide_bitmask>0</collide_bitmask>
+  </gazebo>
+
+  <gazebo reference="turret_link">
+      <collide_bitmask>0</collide_bitmask>
+      <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="column_link">
+    <collide_bitmask>0</collide_bitmask>
+    <gravity>false</gravity>
+  </gazebo>
+
+  <gazebo reference="drivewhl_l_joint_link">
+      <mu1>2.0</mu1>
+      <mu2>2.0</mu2>
+      <kp>5000000.0</kp>
+      <kd>10.0</kd>
+      <minDepth>0.002</minDepth>
+      <maxVel>50.0</maxVel>
+      <!-- <fdir1>1 0 0</fdir1> -->
+  </gazebo>
+
+  <gazebo reference="drivewhl_r_joint_link">
+      <mu1>2.0</mu1>
+      <mu2>2.0</mu2>
+      <kp>5000000.0</kp>
+      <kd>10.0</kd>
+      <minDepth>0.002</minDepth>
+      <maxVel>50.0</maxVel>
+      <!-- <fdir1>1 0 0</fdir1> -->
+  </gazebo>
+
+  <!-- Add damping to wheel joints -->
+  <gazebo reference="drivewhl_l_joint">
+      <provideFeedback>true</provideFeedback>
+  </gazebo>
+
+  <gazebo reference="drivewhl_r_joint">
+      <provideFeedback>true</provideFeedback>
+  </gazebo>
+
+  <gazebo reference="turret_caster_fl">
+      <mu1>0.001</mu1>
+      <mu2>0.001</mu2>
+      <kp>1000000.0</kp>
+      <kd>50.0</kd>
+      <minDepth>0.001</minDepth>
+      <maxVel>0.1</maxVel>
+  </gazebo>
+
+  <gazebo reference="turret_caster_fr">
+      <mu1>0.001</mu1>
+      <mu2>0.001</mu2>
+      <kp>1000000.0</kp>
+      <kd>50.0</kd>
+      <minDepth>0.001</minDepth>
+      <maxVel>0.1</maxVel>
+  </gazebo>
+
+  <gazebo reference="turret_caster_bl">
+      <mu1>0.001</mu1>
+      <mu2>0.001</mu2>
+      <kp>1000000.0</kp>
+      <kd>50.0</kd>
+      <minDepth>0.001</minDepth>
+      <maxVel>0.1</maxVel>
+  </gazebo>
+
+  <gazebo reference="turret_caster_br">
+      <mu1>0.001</mu1>
+      <mu2>0.001</mu2>
+      <kp>1000000.0</kp>
+      <kd>50.0</kd>
+      <minDepth>0.001</minDepth>
+      <maxVel>0.1</maxVel>
+  </gazebo>
+  
+</robot>

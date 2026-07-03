@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>robo_drill</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="muhammad.zain.bashir@upc.edu">zain</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>ros_gz_sim</depend>
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_image</depend>
+  <depend>xacro</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
+  <depend>gz_ros2_control</depend>
+  <depend>twist_mux</depend>
+  <depend>joy_linux</depend>
+  <!-- velodyne_gazebo_plugins no longer needed - Gz Sim has built-in GPU lidar -->
+  <depend>robot_localization</depend>
+  <depend>mapviz</depend>
+  <depend>mapviz_plugins</depend>
+  <depend>tile_map</depend>
+  <depend>multires_image</depend>
+  <depend>rtabmap_ros</depend>
+  <depend>ntrip_client</depend>
+  <depend>opencv4</depend>
+  <depend>cv_bridge</depend>
+  <depend>depthai_descriptions</depend>
+  <depend>depthai_ros_msgs</depend>
+  <depend>backward_ros</depend> <!-- for automatic backtrace -->
+  <depend>nav2_costmap_2d</depend>
+  <depend>actionlib_msgs</depend>
+  <depend>nav2_util</depend>
+  <depend>nav2_core</depend>
+  <depend>nav2_behaviors</depend>
+  <depend>nav2_behavior_tree</depend>
+  <depend>behaviortree_cpp_v3</depend>
+  <depend>rclcpp_action</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>action_msgs</depend>
+  <depend>builtin_interfaces</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>arm_control</depend>
+  <depend>std_srvs</depend>
+  <depend>libmodbus-dev</depend>
+  <!-- Robot body self-filter: ShapeMask lives in moveit_ros_perception. -->
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_perception</depend>
+  <depend>geometric_shapes</depend>
+  <depend>tf2_eigen</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>urdfdom</depend>
+  <depend>srdfdom</depend>
+  <exec_depend>depthai_ros_driver</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>pcl_ros</exec_depend>
+  <exec_depend>pcl_conversions</exec_depend>
+  <exec_depend>tf2</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>depthai_ros_driver</exec_depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  <build_depend>pcl_conversions</build_depend>
+  <build_depend>rosidl_default_generators</build_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>visualization_msgs</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

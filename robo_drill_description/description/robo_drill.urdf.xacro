@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<robot name="robo_drill" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- Define any constants here    -->
+    <xacro:property name="M_PI" value="3.1415926535897931"/>
+
+    <!-- Get arguments from launch file    -->
+    <xacro:arg name="use_mock_hardware" default="true"/>
+    <xacro:arg name="simulation" default="false"/>
+    <xacro:arg name="ethercat_interface" default="eno1"/>
+    <xacro:arg name="ros_domain_id" default=" "/>
+    <xacro:arg name="base_only" default="false"/>
+    <xacro:arg name="simulation_controllers" default="$(find robo_drill)/config/diffdrive_controllers.yaml"/>
+
+    <!-- Define any properties, couldn't find  a way to directly evaluate on the passed argument and had to go through a property for each arg passed-->
+    <xacro:property name="robot_id" value="$(arg ros_domain_id)"/>
+
+    <xacro:include filename="robo_drill_colors.xacro"/>
+    <xacro:include filename="robo_drill_inertias.xacro"/>
+
+    <xacro:include filename="oliwall_base_links.xacro"/>
+    <xacro:include filename="sick_multiscan.xacro"/>
+    <xacro:include filename="os-dome.xacro"/>
+    <xacro:include filename="realsense_camera.xacro"/>
+    <!-- <xacro:include filename="oak_camera.xacro"/> -->
+
+
+    <!-- Front-right Sick lidar -->
+    <xacro:sick_multiscan_sensor
+        parent_link="os_sensor_mount"
+        namespace="front"
+        sick_link="front_sick_scan" 
+        sick_scan_link="front_sick"
+        sick_imu_link="front_sick_imu"
+        origin_xyz="-0.002 0.243 -0.081"  
+        origin_rpy="1.130 0.938 1.453"
+    />
+
+    <!-- Sick lidar at back-left of robot -->
+    <xacro:sick_multiscan_sensor
+        parent_link="os_sensor_mount"
+        namespace="rear"
+        sick_link="rear_sick_scan"
+        sick_scan_link="rear_sick"
+        sick_imu_link="rear_sick_imu"
+        origin_xyz="-0.002 -0.252 -0.788"
+        origin_rpy="-1.98 -0.973 -1.496"
+
+    />
+    <!-- Add third sick lidar only in simulation -->
+    <xacro:if value="$(arg simulation)">
+        <xacro:sick_multiscan_sensor
+            parent_link="os_sensor_mount"
+            namespace="dome"
+            sick_link="os_lidar"
+            sick_scan_link="dome_scan"
+            sick_imu_link="dome_imu"
+            origin_xyz="0 0 0"
+            origin_rpy="0 0 0"
+        />
+    </xacro:if>
+
+    <!-- Front RealSense D435i (forward facing) - legacy frames/topics preserved -->
+    <xacro:realsense_d435
+        parent_link="os_sensor_mount"
+        camera_name="camera"
+        topic_ns="camera/camera"
+        origin_xyz="0.0075 -0.128 0.015"
+        origin_rpy="-2.998 -1.541 -0.145"
+    />
+
+    <!-- Rear RealSense D435i (back of turret, for localization and mapping) -->
+    <!-- TODO: replace origin with the measured pose of the rear camera on os_sensor_mount -->
+    <xacro:realsense_d435
+        parent_link="os_sensor_mount"
+        camera_name="camera_rear"
+        topic_ns="camera_rear"
+        origin_xyz="0.0075 0.128 -0.84"
+        origin_rpy="-0.143 1.541 -0.145"
+    />
+    <xacro:include filename="robodrill_diffdrive_control.xacro" />
+
+</robot>

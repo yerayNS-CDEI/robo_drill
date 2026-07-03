@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- This file includes the oliwall_base.urdf and adds a lidar support link -->
+    
+    <!-- Include the complete oliwall base URDF -->
+    <xacro:include filename="$(find robo_drill)/robo_drill_description/description/oliwall_base.urdf"/>
+    
+
+</robot>

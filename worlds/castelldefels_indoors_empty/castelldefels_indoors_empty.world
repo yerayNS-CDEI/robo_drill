@@ -1,0 +1,529 @@
+<?xml version="1.0" ?>
+<sdf version='1.7'>
+  <world name='castelldefels_indoors'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.03 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="ground_plane_link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="column_1">
+      <static>true</static>
+      <link name="column_1_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>5.415 -0.33 1.5 0 0 0</pose>
+    </model>
+
+    <model name="column_2">
+      <static>true</static>
+      <link name="column_2_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>11.435 -0.33 1.5 0 0 0</pose>
+    </model>
+
+    <model name="column_3">
+      <static>true</static>
+      <link name="column_3_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>17.424999999999997 -0.33 1.5 0 0 0</pose>
+    </model>
+
+    <model name="column_4">
+      <static>true</static>
+      <link name="column_4_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>5.415 -7.33 1.5 0 0 0</pose>
+    </model>
+
+    <model name="column_5">
+      <static>true</static>
+      <link name="column_5_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>11.435 -7.33 1.5 0 0 0</pose>
+    </model>
+
+    <model name="column_6">
+      <static>true</static>
+      <link name="column_6_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>17.424999999999997 -7.33 1.5 0 0 0</pose>
+    </model>
+
+    <model name="column_7">
+      <static>true</static>
+      <link name="column_7_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.31 0.66 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>5.415 -14.43 1.5 0 0 0</pose>
+    </model>
+
+    <model name="wall_1">
+      <static>true</static>
+      <link name="wall_1_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>20.69 0.25 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>20.69 0.25 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>10.345 0.125 1.5 0 0 0.0</pose>
+    </model>
+
+    <model name="wall_2">
+      <static>true</static>
+      <link name="wall_2_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>10.3 0.25 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>10.3 0.25 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>20.815 -5.15 1.5 0 0 -1.5707963267948966</pose>
+    </model>
+
+    <model name="wall_3">
+      <static>true</static>
+      <link name="wall_3_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>8.95 0.25 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>8.95 0.25 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>16.215000000000003 -10.425 1.5 0 0 3.141592653589793</pose>
+    </model>
+
+    <model name="wall_4">
+      <static>true</static>
+      <link name="wall_4_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>4.46 0.25 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>4.46 0.25 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>11.865 -12.530000000000001 1.5 0 0 4.71238898038469</pose>
+    </model>
+
+    <model name="wall_5">
+      <static>true</static>
+      <link name="wall_5_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>11.74 0.25 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>11.74 0.25 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>5.87 -14.885 1.5 0 0 3.141592653589793</pose>
+    </model>
+
+    <model name="wall_6">
+      <static>true</static>
+      <link name="wall_6_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>14.76 0.25 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>14.76 0.25 3.0</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>-0.12499999999999954 -7.38 1.5 0 0 1.5707963267948966</pose>
+    </model>
+
+    <!-- <model name="ramp_1">
+      <static>true</static>
+      <link name="ramp_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size> 4.46 2.09  0.205</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size> 2.09 4.46 0.205</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <pose>10.695 -12.53 0 0.04593179704873352 0 3.141592653589793</pose>
+    </model> -->
+
+    <!-- Aruco Marker 0 on column_1 -->
+    <model name="aruco_marker_0">
+      <static>true</static>
+      <link name="aruco_marker_0_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.001 0.3</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://aruco_marker_0.material</uri>
+              <name>ArucoMarker0</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <pose>5.21 -0.33 1.5 0 0 -4.7124</pose>
+    </model>
+
+    <!-- Aruco Marker 1 on column_2 -->
+    <model name="aruco_marker_1">
+      <static>true</static>
+      <link name="aruco_marker_1_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.001 0.3</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://aruco_marker_1.material</uri>
+              <name>ArucoMarker1</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <pose>11.23 -0.33 1.5 0 0 -4.7124</pose>
+    </model>
+
+    <!-- Aruco Marker 2 on column_3 -->
+    <model name="aruco_marker_2">
+      <static>true</static>
+      <link name="aruco_marker_2_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.001 0.3</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://aruco_marker_2.material</uri>
+              <name>ArucoMarker2</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <pose>17.22 -0.33 1.5 0 0 -4.7124</pose>
+    </model>
+
+    <!-- Aruco Marker 3 on column_4 -->
+    <model name="aruco_marker_3">
+      <static>true</static>
+      <link name="aruco_marker_3_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.001 0.3</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://aruco_marker_3.material</uri>
+              <name>ArucoMarker3</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <pose>5.21 -7.33 1.5 0 0 -4.7124</pose>
+    </model>
+
+    <!-- Aruco Marker 4 on column_5 -->
+    <model name="aruco_marker_4">
+      <static>true</static>
+      <link name="aruco_marker_4_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.001 0.3</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://aruco_marker_4.material</uri>
+              <name>ArucoMarker4</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <pose>11.23 -7.33 1.5 0 0 -4.7124</pose>
+    </model>
+
+    <!-- Aruco Marker 5 on column_6 -->
+    <model name="aruco_marker_5">
+      <static>true</static>
+      <link name="aruco_marker_5_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.3 0.001 0.3</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://aruco_marker_5.material</uri>
+              <name>ArucoMarker5</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <pose>17.22 -7.33 1.5 0 0 -4.7124</pose>
+    </model>
+
+    <!-- Cafe table 1 -->
+    <include>
+      <uri>model://cafe_table</uri>
+      <name>cafe_table_1</name>
+      <pose>8 -3 0 0 0 0</pose>
+    </include>
+
+    <!-- Cafe table 2 -->
+    <include>
+      <uri>model://cafe_table</uri>
+      <name>cafe_table_2</name>
+      <pose>14 -5 0 0 0 0</pose>
+    </include>
+
+    <!-- Table -->
+    <include>
+      <uri>model://table</uri>
+      <name>table_1</name>
+      <pose>2.281591 -3.420889 0 0 0 0</pose>
+    </include>
+
+    <!-- Cardboard box 1 -->
+    <include>
+      <uri>model://cardboard_box</uri>
+      <name>cardboard_box_1</name>
+      <pose>4.918403 -7.351679 0.149000 0 0 0.015448</pose>
+    </include>
+
+    <!-- table_marble -->
+    <include>
+      <uri>model://table_marble</uri>
+      <name>table_marble_1</name>
+      <pose>3 -12 0.638051 0 0 0</pose>
+    </include>
+
+    <!-- Cardboard box 3 -->
+    <include>
+      <uri>model://cardboard_box</uri>
+      <name>cardboard_box_3</name>
+      <pose>10.510079 -7.314054 0.149000 0 0 -0.011934</pose>
+    </include>
+
+    <!-- Wall between column_2 and column_5 -->
+    <model name="wall_column_2_to_5">
+      <static>true</static>
+      <link name="green_wall">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>7.0 0.1 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>7.0 0.1 3.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 0.8 0.1 1</ambient>
+            <diffuse>0.2 1 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+      <pose>11.435 -3.83 1.5 0 0 1.5707963267948966</pose>
+    </model>
+
+  </world>
+</sdf>

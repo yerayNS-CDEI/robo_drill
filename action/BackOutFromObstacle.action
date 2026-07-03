@@ -1,0 +1,13 @@
+# Goal
+# Maximum distance (m) to travel while escaping before giving up.
+float32 max_distance
+# Linear speed (m/s, magnitude) used for the escape strafe.
+float32 speed
+# Maximum time allowed for the maneuver.
+builtin_interfaces/Duration time_allowance
+---
+# Result
+builtin_interfaces/Duration total_elapsed_time
+---
+# Feedback
+float32 distance_traveled

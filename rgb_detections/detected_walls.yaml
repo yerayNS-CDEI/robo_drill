@@ -1,0 +1,130 @@
+# Persistent walls detected by robo_drill wall_aggregator_node.
+# frame: map
+# Regenerated in place; walls are keyed by id (no duplicates).
+walls:
+  - id: 0
+    normal: [0.9606, -0.2779]
+    d: 5.2921
+    p1: [-7.6619, -7.4418]
+    p2: [-3.5638, 6.7245]
+    z_min: 0.2654
+    z_max: 1.9814
+    observations: 639
+    confidence: 1.0000
+  - id: 1
+    normal: [-0.3205, -0.9472]
+    d: 5.1944
+    p1: [-3.6929, 6.7331]
+    p2: [16.6271, -0.1421]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 1041
+    confidence: 1.0000
+  - id: 19
+    normal: [-0.9509, 0.3095]
+    d: 6.6925
+    p1: [4.9681, -6.3602]
+    p2: [2.2129, -14.8260]
+    z_min: 0.1992
+    z_max: 1.9793
+    observations: 163
+    confidence: 1.0000
+  - id: 4
+    normal: [0.2936, 0.9559]
+    d: 23.6831
+    p1: [-8.0858, -22.2915]
+    p2: [4.9142, -26.3415]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 3
+    confidence: 0.5000
+  - id: 5
+    normal: [-0.7071, 0.7071]
+    d: 4.6345
+    p1: [6.4884, -0.0657]
+    p2: [9.2884, 2.6343]
+    z_min: 0.2260
+    z_max: 1.9791
+    observations: 129
+    confidence: 1.0000
+  - id: 10
+    normal: [0.2788, 0.9603]
+    d: 4.6133
+    p1: [13.5596, -8.7404]
+    p2: [5.8096, -6.4904]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 17
+    confidence: 1.0000
+  - id: 35
+    normal: [0.3422, 0.9396]
+    d: 9.1570
+    p1: [3.6198, -11.0632]
+    p2: [-9.1042, -6.4300]
+    z_min: 0.2420
+    z_max: 2.0014
+    observations: 1014
+    confidence: 1.0000
+  - id: 15
+    normal: [-0.0250, 0.9997]
+    d: 0.6929
+    p1: [14.0642, -0.3415]
+    p2: [16.0642, -0.2915]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 3
+    confidence: 0.5000
+  - id: 16
+    normal: [-0.9857, 0.1683]
+    d: 4.9269
+    p1: [4.5556, -2.5925]
+    p2: [4.9056, -0.5425]
+    z_min: 0.2260
+    z_max: 1.9791
+    observations: 129
+    confidence: 1.0000
+  - id: 21
+    normal: [-0.9701, 0.2425]
+    d: 6.2385
+    p1: [5.4962, -3.7370]
+    p2: [6.1962, -0.9370]
+    z_min: 0.1992
+    z_max: 1.9793
+    observations: 383
+    confidence: 1.0000
+  - id: 26
+    normal: [0.2124, -0.9772]
+    d: -2.3484
+    p1: [14.3142, 0.7085]
+    p2: [16.6142, 1.2085]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 339
+    confidence: 1.0000
+  - id: 30
+    normal: [0.3363, 0.9417]
+    d: -4.5668
+    p1: [14.1142, -0.1915]
+    p2: [16.2142, -0.9415]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 0
+    confidence: 0.5000
+  - id: 33
+    normal: [-0.2316, -0.9728]
+    d: 3.7037
+    p1: [3.0031, 3.0922]
+    p2: [6.1531, 2.3422]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 516
+    confidence: 1.0000
+  - id: 40
+    normal: [0.3534, 0.9355]
+    d: 21.6047
+    p1: [-7.6858, -20.1914]
+    p2: [-5.4358, -21.0414]
+    z_min: 0.0000
+    z_max: 2.5000
+    observations: 3
+    confidence: 0.5000
