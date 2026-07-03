@@ -17,6 +17,9 @@ controller_manager:
     column_position_controller:
       type: forward_command_controller/ForwardCommandController
 
+    gantry_position_controller:
+      type: forward_command_controller/ForwardCommandController
+
     sim_controller:
       type: sim_controller/SimController
 diffbot_base_controller:
@@ -70,7 +73,8 @@ diffbot_base_controller:
 
 joint_state_broadcaster:
   ros__parameters:
-    joints: [ 'drivewhl_l_joint', 'drivewhl_r_joint', 'turret_joint', 'column_joint' ]
+    joints: [ 'drivewhl_l_joint', 'drivewhl_r_joint', 'turret_joint', 'column_joint',
+              'gantry_y_joint', 'gantry_x_joint', 'gantry_rot_joint' ]
 
 turret_controller:
   ros__parameters:
@@ -104,6 +108,14 @@ column_position_controller:
   ros__parameters:
     joints:
       - column_joint
+    interface_name: position
+
+gantry_position_controller:
+  ros__parameters:
+    joints:
+      - gantry_y_joint
+      - gantry_x_joint
+      - gantry_rot_joint
     interface_name: position
 sim_controller:
   ros__parameters:

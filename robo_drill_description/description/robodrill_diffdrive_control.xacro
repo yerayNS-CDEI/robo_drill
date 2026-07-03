@@ -85,6 +85,41 @@
         </joint>
     </ros2_control>
 
+    <!-- Gantry - Stage 2 (Y), Stage 3 (X) and end rotation.
+         Registered so the joint_state_broadcaster publishes their positions
+         (otherwise robot_state_publisher can't place these links and RViz
+         shows them at the world origin). Real gantry hardware is not yet
+         implemented, so non-simulation uses a mock system for now. -->
+    <ros2_control name="gantry_controller" type="system">
+        <xacro:if value="$(arg simulation)">
+            <hardware>
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </hardware>
+        </xacro:if>
+        <xacro:unless value="$(arg simulation)">
+            <hardware>
+                <plugin>mock_components/GenericSystem</plugin>
+                <param name="calculate_dynamics">true</param>
+            </hardware>
+        </xacro:unless>
+
+        <joint name="gantry_y_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="gantry_x_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="gantry_rot_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
     <xacro:if value="$(arg simulation)">
         <xacro:if value="$(arg base_only)">
             <!-- The Gz Sim plugin launches the controller manager with it. With real hardware we would need
