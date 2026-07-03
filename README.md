@@ -1,4 +1,4 @@
-# Oliwall: Autonomous non-invasive scanning and identification robotic system
+# Pokeye: Autonomous non-invasive scanning and identification robotic system
 
 An autonomous navigation robot package for ROS2 that performs 3D mapping using RTABMap and autonomous navigation using Nav2.
 

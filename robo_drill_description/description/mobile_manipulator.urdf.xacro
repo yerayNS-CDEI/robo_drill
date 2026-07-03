@@ -70,8 +70,8 @@
     
     <xacro:include filename="robo_drill_colors.xacro"/>
     <xacro:include filename="robo_drill_inertias.xacro"/>
-    <!-- <xacro:include filename="oliwall_base_links.xacro"/> -->
-    <xacro:include filename="oliwall_base.urdf"/>
+    <!-- <xacro:include filename="pokeye_base_links.xacro"/> -->
+    <xacro:include filename="pokeye_base.urdf"/>
     <xacro:include filename="sick_multiscan.xacro"/>
     <xacro:include filename="os-dome.xacro"/>
     <xacro:include filename="realsense_camera.xacro"/>

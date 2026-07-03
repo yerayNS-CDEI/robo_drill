@@ -3,8 +3,8 @@
 <package format="3">
   <name>robo_drill</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="muhammad.zain.bashir@upc.edu">zain</maintainer>
+  <description>Navigation, mapping and control stack for the Robo Drill mobile manipulator (second robot, Pokeye base).</description>
+  <maintainer email="zewdiehabtie26@gmail.com">yeray.navarro</maintainer>
   <license>TODO: License declaration</license>
 
   <depend>rclcpp</depend>

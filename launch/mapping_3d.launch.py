@@ -56,7 +56,7 @@ def generate_launch_description():
     # Include platform launch file
     platform_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
-            PathJoinSubstitution([package_path, 'launch', 'oliwall_mobile_manipulator.launch.py'])
+            PathJoinSubstitution([package_path, 'launch', 'pokeye_mobile_manipulator.launch.py'])
         ]),
         launch_arguments={'sim': simulation_mode,
                           'world': world_name,

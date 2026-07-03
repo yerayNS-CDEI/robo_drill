@@ -3,7 +3,7 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  xmlns:xacro="http://ros.org/wiki/xacro" name="Oliwall">
+  xmlns:xacro="http://ros.org/wiki/xacro" name="Pokeye">
 
   <!-- Define robot constants -->
   <xacro:property name="turret_height" value="0.162"/>
@@ -375,7 +375,7 @@
     effort="1000.0"
     velocity="0.1" />
   </joint>
-  <!-- Add Gazebo materials for the oliwall links -->
+  <!-- Add Gazebo materials for the pokeye links -->
   <gazebo reference="base_link">
       <collide_bitmask>0</collide_bitmask>
   </gazebo>

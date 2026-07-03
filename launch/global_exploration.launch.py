@@ -20,7 +20,7 @@ def generate_launch_description():
     world          = LaunchConfiguration('world')
     use_sim_time   = LaunchConfiguration('use_sim_time')
     # NOTE: this is intentionally NOT named 'params_file'. A LaunchConfiguration named
-    # 'params_file' would leak down the include chain (mapping_3d -> oliwall -> platform ->
+    # 'params_file' would leak down the include chain (mapping_3d -> pokeye -> platform ->
     # sensors -> ouster dome_driver), overriding dome_driver's default dome_params.yaml and
     # leaving sensor_hostname unset, which makes os_driver fail to configure and tears down
     # the whole launch. Launching mapping_3d.launch.py directly works precisely because it
