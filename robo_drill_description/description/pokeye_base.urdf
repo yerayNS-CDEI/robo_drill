@@ -379,13 +379,13 @@
   <!-- ============================================================= -->
   <!-- Pokeye 3-stage linear-actuator gantry + end rotation.         -->
   <!-- Stage 1 (vertical Z lift) is the column above.                -->
-  <!-- Stage 2 = gantry_y_joint  : sideways (Y) motion.              -->
-  <!-- Stage 3 = gantry_x_joint  : reach (X) motion.                 -->
-  <!-- End    = gantry_rot_joint : tool rotation about Z.            -->
+  <!-- Stage 2 (gantry_y_joint) sideways/Y motion.                   -->
+  <!-- Stage 3 (gantry_x_joint) reach/X motion.                      -->
+  <!-- End (gantry_rot_joint) tool rotation about Z.                 -->
   <!-- Geometry is placeholder rectangular prisms; refine as needed. -->
   <!-- ============================================================= -->
 
-  <!-- Stage 2: side (Y) carriage, mounted on top of the column -->
+  <!-- Stage 2 - side (Y) carriage, mounted on top of the column -->
   <link name="gantry_y_link">
     <inertial>
       <origin xyz="0 0 0.05" rpy="0 0 0" />
@@ -417,7 +417,7 @@
     <limit lower="-0.25" upper="0.25" effort="500.0" velocity="0.2" />
   </joint>
 
-  <!-- Stage 3: reach (X) beam, mounted on the Y carriage -->
+  <!-- Stage 3 - reach (X) beam, mounted on the Y carriage -->
   <link name="gantry_x_link">
     <inertial>
       <origin xyz="0.15 0 0.05" rpy="0 0 0" />
@@ -449,7 +449,7 @@
     <limit lower="0.0" upper="0.40" effort="500.0" velocity="0.2" />
   </joint>
 
-  <!-- End rotation: tool that rotates about Z, at the front of the reach beam -->
+  <!-- End rotation - tool that rotates about Z, at the front of the reach beam -->
   <link name="gantry_rot_link">
     <inertial>
       <origin xyz="0 0 -0.075" rpy="0 0 0" />
