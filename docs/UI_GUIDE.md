@@ -18,7 +18,7 @@ A valid `ROS_DOMAIN_ID` (1–19) should be set, matching the platform launches.
 ### 1. Base Control
 Brings up and manages the base platform (`mode:=base`):
 - **Launch Base Robot** – `ros2 launch robo_drill platform.launch.py sim:=<mode> mode:=base controller_type:=<type> ...`
-- Start Mapping / Localization / Nav2 / Exploration (all `mode:=base`)
+- Start Localization / Nav2 (all `mode:=base`)
 - Troubleshooting: view map, list controllers, RQT, list processes
 - Emergency stop, terminal + status log with filtering
 
@@ -37,8 +37,8 @@ are one gantry driven by the single `gantry_position_controller`.
 
 ### 3. Full Control
 Same platform stack as Base Control but in `mode:=full` (base + gantry brought up
-together via `platform.launch.py ... mode:=full`). Includes mapping/localization/
-nav2/exploration, emergency stop, troubleshooting and status log.
+together via `platform.launch.py ... mode:=full`). Includes localization/nav2,
+emergency stop, troubleshooting and status log.
 
 ### 4. FSM
 Launches and monitors the `task_planner_fsm` state machine (unchanged).

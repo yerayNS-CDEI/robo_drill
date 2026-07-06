@@ -206,8 +206,8 @@ controller_server:
     general_goal_checker:
       stateful: True # Whether to check for XY position tolerance after rotating to goal orientation in case of minor localization changes.
       plugin: "nav2_controller::SimpleGoalChecker"
-      # Strict defaults for localization. navigation_launch.py overrides these per-launch
-      # (looser during exploration mapping) via RewrittenYaml param_rewrites.
+      # Strict defaults for localization. navigation_launch.py can override these
+      # per-launch via RewrittenYaml param_rewrites.
       xy_goal_tolerance: 0.25 #Tolerance to meet goal completion criteria (m).
       yaw_goal_tolerance: 0.35 #Tolerance to meet goal completion criteria (rad).
 

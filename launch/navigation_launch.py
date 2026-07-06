@@ -182,8 +182,8 @@ def generate_launch_description():
 
     # Goal tolerances are rewritten into the controller_server goal_checker via the
     # RewrittenYaml param_rewrites above. Defaults preserve the strict localization
-    # values; the exploration launches pass looser values for frontier mapping. The
-    # yaw default is controller-aware to match each params file (diff 0.35 vs omni 0.25).
+    # values; callers can pass looser values if needed. The yaw default is
+    # controller-aware to match each params file (diff 0.35 vs omni 0.25).
     declare_xy_goal_tolerance_cmd = DeclareLaunchArgument(
         'xy_goal_tolerance',
         default_value='0.25',

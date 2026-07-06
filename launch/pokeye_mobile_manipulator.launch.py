@@ -33,13 +33,6 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "hybrid_sim",
-            default_value='false',
-            description="Use URSim for the arm while keeping the full stack launch active",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "mode",
             default_value="full",
             description="Launch mode full|base|arm",
@@ -85,10 +78,8 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "robot_ip",
-            default_value=PythonExpression(
-                ["'192.168.56.101' if '", LaunchConfiguration("hybrid_sim"), "' == 'true' else '192.168.1.102'"]
-            ),
-            description="IP address for the UR robot or URSim instance",
+            default_value="192.168.1.102",
+            description="IP address for the UR robot",
         )
     )
     declared_arguments.append(
@@ -150,7 +141,6 @@ def generate_launch_description():
 
     # Initialize Arguments    
     simulation_mode = LaunchConfiguration('sim')
-    hybrid_sim = LaunchConfiguration("hybrid_sim")
     mode = LaunchConfiguration("mode")
     world_name = LaunchConfiguration('world')
     headless = LaunchConfiguration('headless')

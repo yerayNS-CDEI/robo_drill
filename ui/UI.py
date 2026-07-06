@@ -208,8 +208,8 @@ class RobotControlUI(QMainWindow):
         sim_param_layout.addStretch()
         base_tab_layout.insertLayout(0, sim_param_layout)
  
-        # Mapping and Localization Box
-        mapping_loc_box = QGroupBox("Mapping and Localization")
+        # Map and Localization Box
+        mapping_loc_box = QGroupBox("Map & Localization")
         mapping_loc_layout = QVBoxLayout()
         mapping_loc_box.setLayout(mapping_loc_layout)
 
@@ -222,12 +222,6 @@ class RobotControlUI(QMainWindow):
             "headless:=<true/false>"
         )
         mapping_loc_layout.addWidget(self.btn_launch_base_robot)
- 
-        # Launch Mapping button
-        self.btn_launch_mapping = QPushButton("Start Mapping")
-        self.btn_launch_mapping.clicked.connect(lambda: self.toggle_mapping(controller_type_combo=self.controller_type_combo, headless_combo=self.base_headless_combo))
-        self.btn_launch_mapping.setToolTip("ros2 launch robo_drill mapping_3d.launch.py sim:=<mode> mode:=base controller_type:=<type> headless:=<true/false>")
-        mapping_loc_layout.addWidget(self.btn_launch_mapping)
 
         # Launch Localization button
         self.btn_launch_localization = QPushButton("Start Localization")
@@ -244,25 +238,19 @@ class RobotControlUI(QMainWindow):
         mapping_loc_layout.addStretch()
         base_boxes_layout.addWidget(mapping_loc_box)
  
-        # Navigation and Exploration Box
-        nav_explore_box = QGroupBox("Navigation and Exploration")
-        nav_explore_layout = QVBoxLayout()
-        nav_explore_box.setLayout(nav_explore_layout)
- 
+        # Navigation Box
+        nav_box = QGroupBox("Navigation")
+        nav_layout = QVBoxLayout()
+        nav_box.setLayout(nav_layout)
+
         # Launch Nav2 button
         self.btn_launch_nav2 = QPushButton("Launch Nav2")
         self.btn_launch_nav2.clicked.connect(lambda: self.toggle_nav2(controller_type_combo=self.controller_type_combo))
         self.btn_launch_nav2.setToolTip("ros2 launch robo_drill navigation_launch.py use_sim_time:=<mode> controller_type:=<type>")
-        nav_explore_layout.addWidget(self.btn_launch_nav2)
- 
-        # Launch Exploration button
-        self.btn_launch_exploration = QPushButton("Launch Exploration(explore_lite)")
-        self.btn_launch_exploration.clicked.connect(lambda: self.toggle_exploration())
-        self.btn_launch_exploration.setToolTip("ros2 run robo_drill explore --ros-args --params-file config/explore_params.yaml")
-        nav_explore_layout.addWidget(self.btn_launch_exploration)
- 
-        nav_explore_layout.addStretch()
-        base_boxes_layout.addWidget(nav_explore_box)
+        nav_layout.addWidget(self.btn_launch_nav2)
+
+        nav_layout.addStretch()
+        base_boxes_layout.addWidget(nav_box)
  
         # Troubleshooting Box
         troubleshooting_box = QGroupBox("Troubleshooting")
@@ -476,27 +464,14 @@ class RobotControlUI(QMainWindow):
         full_control_boxes_layout = QHBoxLayout()
         full_control_tab_layout.addLayout(full_control_boxes_layout)
 
-        # Mapping, Localization, Navigation, Exploration Box
-        full_control_mapping_box = QGroupBox("Mapping, Localization, Navigation, Exploration")
+        # Localization, Navigation Box
+        full_control_mapping_box = QGroupBox("Localization & Navigation")
         full_control_mapping_layout = QVBoxLayout()
         full_control_mapping_box.setLayout(full_control_mapping_layout)
 
         self.btn_full_control_launch = QPushButton("Launch Full Robot")
         self.btn_full_control_launch.clicked.connect(self.toggle_full_control_launch)
         full_control_mapping_layout.addWidget(self.btn_full_control_launch)
-
-        self.btn_full_control_mapping = QPushButton("Start Mapping")
-        self.btn_full_control_mapping.clicked.connect(
-            lambda: self.toggle_mapping(
-                mode='full',
-                button=self.btn_full_control_mapping,
-                sim_combo=self.full_control_sim_mode_combo,
-                controller_type_combo=self.full_control_controller_type_combo,
-                headless_combo=self.full_control_headless_combo,
-            )
-        )
-        self.btn_full_control_mapping.setToolTip("ros2 launch robo_drill mapping_3d.launch.py sim:=<mode> mode:=full controller_type:=<type> headless:=<true/false>")
-        full_control_mapping_layout.addWidget(self.btn_full_control_mapping)
 
         self.btn_full_control_localization = QPushButton("Start Localization")
         self.btn_full_control_localization.clicked.connect(
@@ -515,11 +490,6 @@ class RobotControlUI(QMainWindow):
         self.btn_full_control_nav2.clicked.connect(lambda: self.toggle_nav2(mode='full', button=self.btn_full_control_nav2, sim_combo=self.full_control_sim_mode_combo, controller_type_combo=self.full_control_controller_type_combo))
         self.btn_full_control_nav2.setToolTip("ros2 launch robo_drill navigation_launch.py use_sim_time:= controller_type:=<type>")
         full_control_mapping_layout.addWidget(self.btn_full_control_nav2)
-
-        self.btn_full_control_exploration = QPushButton("Launch Exploration (explore_lite)")
-        self.btn_full_control_exploration.clicked.connect(lambda: self.toggle_exploration(mode='full', button=self.btn_full_control_exploration, sim_combo=self.full_control_sim_mode_combo))
-        self.btn_full_control_exploration.setToolTip("ros2 run robo_drill explore --ros-args --params-file config/explore_params.yaml")
-        full_control_mapping_layout.addWidget(self.btn_full_control_exploration)
 
         # Emergency stop button for Full Control tab
         full_control_mapping_layout.addWidget(QLabel(""))  # Spacer
@@ -734,19 +704,13 @@ class RobotControlUI(QMainWindow):
                 self.full_control_sim_mode_combo.currentText() == 'false'
             )
 
-    def _on_full_control_hybrid_changed(self):
-        """Refresh dependent UI elements when Full Control hybrid_sim changes."""
-        self._update_full_control_init_box_state()
-        self._update_headless_visibility()
-        self._update_full_control_launch_tooltip()
-
     def _is_robot_bringup_process(self, process_key):
         """Return whether a process key belongs to a robot bringup launch."""
         return process_key in {'mobile_platform', 'full_mobile_manipulator'}
 
     def _is_base_tab_state_process(self, process_key):
         """Return whether a process should lock the Base Control tab context."""
-        return process_key in {'mobile_platform', 'mapping', 'localization', 'nav2', 'exploration'}
+        return process_key in {'mobile_platform', 'localization', 'nav2'}
 
     def _get_base_process_start_text(self, process_key, name):
         """Return the idle button label for base/full-control launch buttons."""
@@ -764,36 +728,7 @@ class RobotControlUI(QMainWindow):
             return 'Stop Base Robot'
         return f"Stop {name}"
 
-    def _sync_full_control_hybrid_sim_state(self):
-        """Apply Full Control hybrid_sim constraints and return the effective value."""
-        sim_mode = (
-            self.full_control_sim_mode_combo.currentText()
-            if hasattr(self, 'full_control_sim_mode_combo')
-            else 'false'
-        )
-        planner_backend = self._get_planner_backend(context='full')
-
-        if sim_mode != 'true':
-            desired_hybrid_sim = 'false'
-            should_lock_hybrid_sim = True
-        elif hasattr(self, 'full_control_hybrid_sim_combo'):
-            # When sim=true: user is free to choose regardless of planner backend
-            desired_hybrid_sim = self.full_control_hybrid_sim_combo.currentText()
-            should_lock_hybrid_sim = False
-        else:
-            desired_hybrid_sim = 'false'
-            should_lock_hybrid_sim = False
-
-        if hasattr(self, 'full_control_hybrid_sim_combo'):
-            previous_signal_state = self.full_control_hybrid_sim_combo.blockSignals(True)
-            if should_lock_hybrid_sim:
-                self.full_control_hybrid_sim_combo.setCurrentText(desired_hybrid_sim)
-            self.full_control_hybrid_sim_combo.setEnabled(not should_lock_hybrid_sim)
-            self.full_control_hybrid_sim_combo.blockSignals(previous_signal_state)
-
-        return desired_hybrid_sim
-
-    def _get_full_control_launch_file(self, hybrid_sim=None):
+    def _get_full_control_launch_file(self):
         """Full Control brings up the whole robo_drill robot (base + gantry manipulator)."""
         return 'pokeye_mobile_manipulator.launch.py'
 
@@ -815,9 +750,8 @@ class RobotControlUI(QMainWindow):
         self.btn_full_control_launch.setToolTip(tooltip)
 
     def _update_full_control_planner_constraints(self):
-        """Keep Full Control hybrid_sim aligned with simulation and refresh planner UI."""
+        """Refresh Full Control planner-dependent UI elements."""
         planner = self._get_planner_backend(context='full')
-        self._sync_full_control_hybrid_sim_state()
 
         # Disable Reset Planner button when backend is moveit
         if hasattr(self, 'btn_full_control_reset_planner'):
@@ -882,10 +816,9 @@ class RobotControlUI(QMainWindow):
             )
 
     def _update_full_control_init_box_state(self):
-        """Disable Full Control initialization only when sim=true and hybrid_sim=false."""
+        """Disable Full Control initialization while simulation mode is selected."""
         full_sim_mode = self.full_control_sim_mode_combo.currentText() if hasattr(self, "full_control_sim_mode_combo") else 'false'
-        full_hybrid_mode = self._sync_full_control_hybrid_sim_state()
-        should_disable = (full_sim_mode == 'true' and full_hybrid_mode == 'false')
+        should_disable = (full_sim_mode == 'true')
         if hasattr(self, "full_control_init_box"):
             self.full_control_init_box.setEnabled(not should_disable)
 
@@ -900,24 +833,10 @@ class RobotControlUI(QMainWindow):
 
         full_sim_mode = self.full_control_sim_mode_combo.currentText() if hasattr(self, "full_control_sim_mode_combo") else 'false'
         full_visible = (full_sim_mode == 'true')
-        full_hybrid_mode = self._sync_full_control_hybrid_sim_state()
         if hasattr(self, "full_control_headless_label"):
             self.full_control_headless_label.setVisible(full_visible)
         if hasattr(self, "full_control_headless_combo"):
             self.full_control_headless_combo.setVisible(full_visible)
-
-        # Full Control hybrid selector is only meaningful in sim mode.
-        if hasattr(self, "full_control_hybrid_sim_label"):
-            self.full_control_hybrid_sim_label.setVisible(full_visible)
-        if hasattr(self, "full_control_hybrid_sim_combo"):
-            self.full_control_hybrid_sim_combo.setVisible(full_visible)
-
-        # In Full Control, headless is only meaningful when hybrid_sim is false.
-        full_headless_visible = full_visible and (full_hybrid_mode == 'false')
-        if hasattr(self, "full_control_headless_label"):
-            self.full_control_headless_label.setVisible(full_headless_visible)
-        if hasattr(self, "full_control_headless_combo"):
-            self.full_control_headless_combo.setVisible(full_headless_visible)
 
     def _set_tab_enabled(self, tab_index, enabled):
         """Enable or disable a tab (make it clickable or unclickable)"""
@@ -942,10 +861,8 @@ class RobotControlUI(QMainWindow):
             key in self.process_map
             for key in [
                 'full_mobile_manipulator',
-                'full_mapping',
                 'full_localization',
                 'full_nav2',
-                'full_exploration',
             ]
         )
 
@@ -1287,7 +1204,7 @@ class RobotControlUI(QMainWindow):
     def _detect_freedrive_controller_manager(self):
         """Find the controller_manager node that hosts freedrive_mode_controller.
 
-        The arm stack can run under the /arm namespace (Full Control hybrid sim),
+        The arm stack can run under the /arm namespace (e.g. the MoveIt backend),
         in which case its controllers live on /arm/controller_manager rather than
         the root /controller_manager. Falls back to /controller_manager.
         """
@@ -1618,61 +1535,7 @@ class RobotControlUI(QMainWindow):
         )
         self._update_tab_states_for_full_control()
 
-    def toggle_mapping(self, mode='base', button=None, sim_combo=None, controller_type_combo=None, headless_combo=None, hybrid_sim_combo=None):
-        """Toggle mapping with configurable mode parameter"""
-        if button is None:
-            button = self.btn_launch_mapping
-        if sim_combo is None:
-            sim_combo = self.sim_mode_combo
-        if controller_type_combo is None:
-            controller_type_combo = self.controller_type_combo
-        if headless_combo is None:
-            headless_combo = self.base_headless_combo if mode == 'base' else self.full_control_headless_combo
-        if hybrid_sim_combo is None and mode == 'full' and hasattr(self, "full_control_hybrid_sim_combo"):
-            hybrid_sim_combo = self.full_control_hybrid_sim_combo
-        
-        sim_mode = sim_combo.currentText()
-        controller_type = controller_type_combo.currentText()
-        headless = headless_combo.currentText() if headless_combo else 'false'
-        if mode == 'full':
-            hybrid_sim = self._sync_full_control_hybrid_sim_state()
-        else:
-            hybrid_sim = hybrid_sim_combo.currentText() if hybrid_sim_combo else 'false'
-        
-        args = [
-            'launch',
-            'robo_drill',
-            'mapping_3d.launch.py',
-            f'sim:={sim_mode}',
-            f'mode:={mode}',
-            f'controller_type:={controller_type}',
-        ]
-        if mode == 'full':
-            args.append(f'hybrid_sim:={hybrid_sim}')
-        args.append(f'headless:={headless}')
-        
-        process_key = f'{mode}_mapping' if mode != 'base' else 'mapping'
-        display_name = 'Mapping'
-        
-        self._toggle_base_process(process_key, button, display_name, 'ros2', args)
-        
-        if mode == 'full':
-            self._update_tab_states_for_full_control()  
-        # Disable/enable localization button based on mapping state
-        localization_button = self._get_localization_button_for_mode(mode)
-        
-        if localization_button:
-            if process_key in self.process_map:
-                localization_button.setEnabled(False)
-            else:
-                localization_button.setEnabled(True)
-        
-        # Update tab states only for base mode
-        if mode == 'base':
-            self._update_tab_states_for_base()
-
-    
-    def toggle_localization(self, mode='base', button=None, sim_combo=None, controller_type_combo=None, headless_combo=None, hybrid_sim_combo=None):
+    def toggle_localization(self, mode='base', button=None, sim_combo=None, controller_type_combo=None, headless_combo=None):
         """Toggle localization with configurable mode parameter"""
         if button is None:
             button = self.btn_launch_localization
@@ -1682,26 +1545,19 @@ class RobotControlUI(QMainWindow):
             controller_type_combo = self.controller_type_combo
         if headless_combo is None:
             headless_combo = self.base_headless_combo if mode == 'base' else self.full_control_headless_combo
-        if hybrid_sim_combo is None and mode == 'full' and hasattr(self, "full_control_hybrid_sim_combo"):
-            hybrid_sim_combo = self.full_control_hybrid_sim_combo
-        
+
         sim_mode = sim_combo.currentText()
         controller_type = controller_type_combo.currentText()
         headless = headless_combo.currentText() if headless_combo else 'false'
-        if mode == 'full':
-            hybrid_sim = self._sync_full_control_hybrid_sim_state()
-        else:
-            hybrid_sim = hybrid_sim_combo.currentText() if hybrid_sim_combo else 'false'
-        
+
         process_key = f'{mode}_localization' if mode != 'base' else 'localization'
         display_name = 'Localization'
-        
+
         localization_args = [
             'launch', 'robo_drill', 'move_robot.launch.py',
             f'sim:={sim_mode}', f'mode:={mode}', f'controller_type:={controller_type}',
         ]
         if mode == 'full':
-            localization_args.append(f'hybrid_sim:={hybrid_sim}')
             localization_args.append(f'planner_backend:={self._get_planner_backend(context="full")}')
             localization_args.extend(self._get_moveit_launch_args(context='full'))
         localization_args.append(f'headless:={headless}')
@@ -1710,21 +1566,11 @@ class RobotControlUI(QMainWindow):
         if mode == 'full':
             self._update_tab_states_for_full_control()
         
-        # Disable/enable mapping button based on localization state
-        mapping_button = self._get_mapping_button_for_mode(mode)
+        # Disable/enable conflicting buttons based on localization state
         disable_buttons = self._get_buttons_to_disable_for_localization(mode)
-        if mapping_button:
-            if process_key in self.process_map:
-                mapping_button.setEnabled(False)
-                # Also disable other buttons that conflict with localization
-                for btn in disable_buttons:
-                    btn.setEnabled(False)
-            else:
-                mapping_button.setEnabled(True)
-                # Re-enable other buttons when localization stops
-                for btn in disable_buttons:
-                    btn.setEnabled(True)
-        
+        for btn in disable_buttons:
+            btn.setEnabled(not (process_key in self.process_map))
+
         # Update tab states only for base mode
         if mode == 'base':
             self._update_tab_states_for_base()
@@ -1769,42 +1615,12 @@ class RobotControlUI(QMainWindow):
         else:
             self._update_tab_states_for_base()
             
-    def toggle_exploration(self, mode='base', button=None, sim_combo=None):
-        """Toggle exploration with configurable mode parameter"""
-        if button is None:
-            button = self.btn_launch_exploration
-        
-        # Get package path for explore_params.yaml
-        try:
-            pkg_share = get_package_share_directory('robo_drill')
-            params_file = os.path.join(pkg_share, 'config', 'explore_params.yaml')
-        except:
-            params_file = '/home/zed/ros2_ws/src/navi-wall/config/explore_params.yaml'
-        
-        process_key = f'{mode}_exploration' if mode != 'base' else 'exploration'
-        display_name = 'Exploration'
-        
-        self._toggle_base_process(process_key, button, display_name,
-                                'ros2', ['run', 'robo_drill', 'explore',
-                                        '--ros-args', '--params-file', params_file])
-        if mode == 'full':
-            self._update_tab_states_for_full_control()
-        else:
-            self._update_tab_states_for_base()
-   
     # Helper methods to get the correct buttons for each mode
-    def _get_mapping_button_for_mode(self, mode):
-        """Get the mapping button for a given mode"""
-        if mode == 'base':
-            return self.btn_launch_mapping
-        elif mode == 'full':
-            return self.btn_full_control_mapping
-        return None
     def _get_buttons_to_disable_for_localization(self, mode):
         if mode == 'base':
-            return [self.btn_launch_mapping, self.btn_launch_exploration, self.btn_launch_nav2]
+            return [self.btn_launch_nav2]
         elif mode == 'full':
-            return [self.btn_full_control_mapping, self.btn_full_control_exploration, self.btn_full_control_nav2]
+            return [self.btn_full_control_nav2]
         return []
     
     def _get_localization_button_for_mode(self, mode):
@@ -2206,13 +2022,13 @@ class RobotControlUI(QMainWindow):
         controller is not up) it skips quickly and lets normal shutdown proceed.
         """
         # Bringups that run the base controller and should park the chassis before
-        # shutdown. Base Control tab: Launch Base Robot, Start Mapping, Start
-        # Localization. Full Control tab: Launch Full Robot, Start Mapping, Start
-        # Localization. (The full-robot base controller is also /sim_controller; if it
-        # were ever named differently, the service-list check below skips gracefully.)
+        # shutdown. Base Control tab: Launch Base Robot, Start Localization. Full
+        # Control tab: Launch Full Robot, Start Localization. (The full-robot base
+        # controller is also /sim_controller; if it were ever named differently, the
+        # service-list check below skips gracefully.)
         if process_key not in (
-            'mobile_platform', 'mapping', 'localization',
-            'full_mobile_manipulator', 'full_mapping', 'full_localization',
+            'mobile_platform', 'localization',
+            'full_mobile_manipulator', 'full_localization',
         ):
             return
 
@@ -2296,11 +2112,7 @@ class RobotControlUI(QMainWindow):
             if pid:
                 try:
                     os.kill(pid, signal.SIGINT)
-                    # Longer wait for mapping to save rtabmap.db
-                    wait_ms = 5000 if 'mapping' in process_key else 3000
-                    if 'mapping' in process_key:
-                        self._log_append(status_text, "💾 Saving mapping database... (waiting for shutdown)")
-                    process.waitForFinished(wait_ms)
+                    process.waitForFinished(3000)
                 except ProcessLookupError:
                     # Process already gone
                     pass
@@ -2325,10 +2137,9 @@ class RobotControlUI(QMainWindow):
 
             uses_gazebo = bool(button.property('uses_gazebo'))
 
-            # Kill Gazebo processes when stopping mapping, localization, or a sim-backed full robot bringup
+            # Kill Gazebo processes when stopping localization or a sim-backed full robot bringup
             if (
-                'mapping' in process_key
-                or 'localization' in process_key
+                'localization' in process_key
                 or (self._is_robot_bringup_process(process_key) and uses_gazebo)
             ):
                 self._kill_gazebo_processes()
@@ -2343,16 +2154,10 @@ class RobotControlUI(QMainWindow):
                 button.setProperty('uses_gazebo', False)
             self._log_append(status_text, f"⏹ Stopped {name}")
 
-            # Re‑enable mutually exclusive buttons
-            if 'mapping' in process_key:
+            # Re‑enable buttons disabled while localization was running
+            if 'localization' in process_key:
                 mode = 'full' if process_key.startswith('full') else 'base'
-                btn = self._get_localization_button_for_mode(mode)
-                if btn:
-                    btn.setEnabled(True)
-            elif 'localization' in process_key:
-                mode = 'full' if process_key.startswith('full') else 'base'
-                btn = self._get_mapping_button_for_mode(mode)
-                if btn:
+                for btn in self._get_buttons_to_disable_for_localization(mode):
                     btn.setEnabled(True)
 
             # Only base mode affects tab states
@@ -2441,28 +2246,19 @@ class RobotControlUI(QMainWindow):
                 self._kill_gazebo_processes()
                 button.setProperty('uses_gazebo', False)
             
-            # Re-enable mutually exclusive buttons
-            if 'mapping' in process_key:
+            # Re-enable buttons disabled while localization was running
+            if 'localization' in process_key:
                 mode = 'full' if process_key.startswith('full') else 'base'
-                localization_button = self._get_localization_button_for_mode(mode)
-                if localization_button:
-                    localization_button.setEnabled(True)
-            elif 'localization' in process_key:
-                mode = 'full' if process_key.startswith('full') else 'base'
-                mapping_button = self._get_mapping_button_for_mode(mode)
-                if mapping_button:
-                    mapping_button.setEnabled(True)
-                # Re-enable other buttons disabled during localization
                 for btn in self._get_buttons_to_disable_for_localization(mode):
                     btn.setEnabled(True)
-            
+
             # Update tab states when base processes finish
             if not process_key.startswith('full') and self._is_base_tab_state_process(process_key):
                 self._update_tab_states_for_base()
 
             elif process_key.startswith('full') and any(
                 p in process_key
-                for p in ['mobile_manipulator', 'mapping', 'localization', 'nav2', 'exploration']
+                for p in ['mobile_manipulator', 'localization', 'nav2']
             ):
                 self._update_tab_states_for_full_control()
  
@@ -2990,38 +2786,20 @@ class RobotControlUI(QMainWindow):
                 )
             del self.process_map[process_key]
 
-    def _is_hybrid_sim_enabled(self, context='full'):
-        """Return True when the requested tab is using hybrid / URSim mode."""
-        if not hasattr(self, "full_control_sim_mode_combo"):
-            return False
-        return self._sync_full_control_hybrid_sim_state() == 'true'
-
     def _get_joint_states_topic_for_ui(self, context='arm'):
-        """Pick the joint_states topic for slider updates/readback based on context and simulation settings."""
+        """Pick the joint_states topic for slider updates/readback based on context and planner backend."""
         if context == 'arm':
             planner_backend = self._get_planner_backend(context='arm')
             if planner_backend == 'moveit':
                 return '/arm/joint_states'
-            return '/joint_states'
-        # Full Control tab uses namespace when both simulation and hybrid_sim are true
-        if (
-            hasattr(self, 'full_control_sim_mode_combo')
-            and self.full_control_sim_mode_combo.currentText() == 'true'
-            and self._sync_full_control_hybrid_sim_state() == 'true'
-        ):
-            return '/arm/joint_states'
         return '/joint_states'
 
     def _get_planned_trajectory_topic_for_ui(self):
         """Pick the planned_trajectory topic for Joint Control publishing."""
-        if self._full_control_uses_arm_namespace():
-            return '/arm/planned_trajectory'
         return '/planned_trajectory'
 
     def _get_robot_ip_for_launch(self, context='arm'):
-        """Pick robot_ip based on the tab's hybrid/URSim selector."""
-        if self._is_hybrid_sim_enabled(context=context):
-            return '192.168.56.101'
+        """IP address for the UR robot."""
         return '192.168.1.102'
 
     def _get_planner_backend(self, context='full'):
@@ -3064,32 +2842,16 @@ class RobotControlUI(QMainWindow):
         """Arm launches now stay in the root namespace for both backends."""
         return ''
 
-    def _full_control_uses_arm_namespace(self):
-        """Only the Full Control hybrid launch keeps the arm stack under /arm."""
-        return (
-            hasattr(self, 'full_control_sim_mode_combo') and
-            self.full_control_sim_mode_combo.currentText() == 'true' and
-            self._sync_full_control_hybrid_sim_state() == 'true'
-        )
-
     def _get_robot_ip_for_arm_launch(self):
         """Backward-compatible arm launch helper."""
         return self._get_robot_ip_for_launch(context='arm')
 
     def _get_emergency_stop_topic_for_ui(self, context='arm'):
-        """Pick the emergency_stop topic based on context and simulation settings."""
+        """Pick the emergency_stop topic based on context and planner backend."""
         if context == 'arm':
             planner_backend = self._get_planner_backend(context='arm')
             if planner_backend == 'moveit':
                 return '/arm/emergency_stop'
-            return '/emergency_stop'
-        # Full Control tab uses namespace when both simulation and hybrid_sim are true
-        if (
-            hasattr(self, 'full_control_sim_mode_combo')
-            and self.full_control_sim_mode_combo.currentText() == 'true'
-            and self._sync_full_control_hybrid_sim_state() == 'true'
-        ):
-            return '/arm/emergency_stop'
         return '/emergency_stop'
 
     def _get_status_text_for_context(self, context='arm'):
@@ -3111,9 +2873,6 @@ class RobotControlUI(QMainWindow):
             namespace = self._get_namespace_for_arm_launch(planner_backend)
             if namespace:
                 return f'/{namespace}/send_position'
-            return '/send_position'
-        if self._is_hybrid_sim_enabled(context=context):
-            return '/arm/send_position'
         return '/send_position'
 
     def _cleanup_send_position_service_call(self, process_key, position_name, status_text):

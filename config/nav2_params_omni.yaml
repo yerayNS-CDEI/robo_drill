@@ -134,8 +134,8 @@ controller_server:
       movement_time_allowance: 5.0
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      # Strict defaults for localization. navigation_launch.py overrides these per-launch
-      # (looser during exploration mapping) via RewrittenYaml param_rewrites.
+      # Strict defaults for localization. navigation_launch.py can override these
+      # per-launch via RewrittenYaml param_rewrites.
       xy_goal_tolerance: 0.25
       yaw_goal_tolerance: 0.25
       stateful: True

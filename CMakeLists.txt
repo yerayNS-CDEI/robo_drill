@@ -101,8 +101,6 @@ endforeach()
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
 set(msg_files
-  "msg/Frontier.msg"
-  "msg/Frontiers.msg"
   "msg/Wall.msg"
   "msg/WallArray.msg"
 )
@@ -123,16 +121,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 ament_export_dependencies(rosidl_default_runtime)
 
-add_executable(exploration_closest_frontier src/exploration_closest_frontier.cpp)
-add_executable(find_frontiers src/find_frontiers.cpp)
-
-ament_target_dependencies(find_frontiers
-  rclcpp sensor_msgs nav2_msgs visualization_msgs std_msgs tf2_ros tf2_geometry_msgs
-)
-ament_target_dependencies(exploration_closest_frontier
-  rclcpp sensor_msgs nav2_msgs visualization_msgs geometry_msgs tf2_ros tf2_geometry_msgs
-)
-
 # Build pointcloud_concatenate library
 add_library(pointcloud_concatenate SHARED
   src/pointcloud_concatenate.cpp
@@ -150,24 +138,6 @@ ament_target_dependencies(pointcloud_concatenate
 # Link with the generated message interfaces from this package
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
-target_link_libraries(find_frontiers "${cpp_typesupport_target}")
-target_link_libraries(exploration_closest_frontier "${cpp_typesupport_target}")
-
-# Add include directory for generated headers
-target_include_directories(find_frontiers PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp>
-)
-target_include_directories(exploration_closest_frontier PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp>
-)
-
-# Ensure message headers are built before executables that use them
-add_dependencies(find_frontiers ${PROJECT_NAME}__rosidl_typesupport_cpp)
-add_dependencies(exploration_closest_frontier ${PROJECT_NAME}__rosidl_typesupport_cpp)
-
-# Link generated message library (fixes undefined reference)
-target_link_libraries(find_frontiers ${PROJECT_NAME}__rosidl_typesupport_cpp)
-target_link_libraries(exploration_closest_frontier ${PROJECT_NAME}__rosidl_typesupport_cpp)
 
 target_link_libraries(pointcloud_concatenate
   ${PCL_LIBRARIES}
@@ -178,35 +148,6 @@ target_link_libraries(pointcloud_concatenate
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
-
-# Build frontier_search library
-add_library(frontier_search SHARED
-  src/frontier_search.cpp
-  src/costmap_client.cpp
-)
-
-ament_target_dependencies(frontier_search
-  rclcpp
-  geometry_msgs
-  nav2_costmap_2d
-  nav2_util
-  visualization_msgs
-)
-
-add_executable(explore src/explore.cpp)
-ament_target_dependencies(explore
-  rclcpp
-  nav2_msgs
-  nav2_costmap_2d
-  nav2_util
-  geometry_msgs
-  visualization_msgs
-  rclcpp_action
-  std_msgs
-  tf2_ros
-  tf2_geometry_msgs
-)
-
 
 add_executable(robot_body_filter_node
   src/robot_body_filter_node.cpp
@@ -318,7 +259,6 @@ rosidl_get_typesupport_target(cpp_typesupport_target_column
 target_link_libraries(column_control "${cpp_typesupport_target_column}")
 
 
-target_link_libraries(explore frontier_search)
 add_library(
   robodrill_hw_interface
   SHARED
@@ -475,9 +415,6 @@ pluginlib_export_plugin_description_file(hardware_interface hardware/column_hw_i
 
 # Install executables
 install(TARGETS
-  explore
-  exploration_closest_frontier
-  find_frontiers
   pointcloud_concatenate_node
   robot_body_filter_node
   wall_detection_node
@@ -488,7 +425,6 @@ install(TARGETS
 
 # Install libraries
 install(TARGETS
-  frontier_search
   pointcloud_concatenate
   robo_drill_retract_arm_behavior
   robo_drill_retract_arm_bt_node

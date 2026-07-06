@@ -123,14 +123,6 @@ def generate_launch_description():
 
     declared_arguments.append(
         DeclareLaunchArgument(
-            "hybrid_sim",
-            default_value="false",
-            description="Enable hybrid simulation launch (base in sim + arm in URSim)",
-        )
-    )
-
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "planner_backend",
             default_value="legacy",
             description="Planner backend to use: legacy or moveit",
@@ -208,7 +200,6 @@ def generate_launch_description():
 
     map_name = LaunchConfiguration('map')
     simulation_mode = LaunchConfiguration('sim')
-    hybrid_sim = LaunchConfiguration('hybrid_sim')
     planner_backend = LaunchConfiguration('planner_backend')
     moveit_planning_pipeline = LaunchConfiguration('moveit_planning_pipeline')
     moveit_pose_planner_id = LaunchConfiguration('moveit_pose_planner_id')
@@ -253,38 +244,11 @@ def generate_launch_description():
                         'moveit_joint_planner_id': moveit_joint_planner_id,
                         'realsense_color_profile': realsense_color_profile,
                         'realsense_depth_profile': realsense_depth_profile,
-                        'hybrid_sim': hybrid_sim,
                         'launch_rviz': PythonExpression(
                             ["'true' if '", planner_backend, "' == 'moveit' else 'false'"]
                         ),
                         'rviz_config_file': rviz_config_file,
                         }.items(),
-        condition=UnlessCondition(
-            PythonExpression(["'", simulation_mode, "' == 'true' and '", hybrid_sim, "' == 'true'"])
-        ),
-    )
-
-    hybrid_simulation_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([package_path, 'launch', 'hybrid_simulation.launch.py'])
-        ]),
-        launch_arguments={
-            'world': world_file,
-            'headless': headless,
-            'controller_type': controller_type,
-            'mode': LaunchConfiguration('mode'),
-            'planner_backend': planner_backend,
-            'moveit_planning_pipeline': moveit_planning_pipeline,
-            'moveit_pose_planner_id': moveit_pose_planner_id,
-            'moveit_joint_planner_id': moveit_joint_planner_id,
-            'launch_rviz': PythonExpression(
-                ["'true' if '", planner_backend, "' == 'moveit' else 'false'"]
-            ),
-            'rviz_config_file': rviz_config_file,
-        }.items(),
-        condition=IfCondition(
-            PythonExpression(["'", simulation_mode, "' == 'true' and '", hybrid_sim, "' == 'true'"])
-        ),
     )
 
         # Include map launch file
@@ -381,7 +345,6 @@ def generate_launch_description():
 
     nodes = [
         platform_launch,
-        hybrid_simulation_launch,
         amcl_localizer_launch,
         slam_localizer_launch,
         robot_body_filter,
