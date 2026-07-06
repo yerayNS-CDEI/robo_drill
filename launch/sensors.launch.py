@@ -49,9 +49,13 @@ def generate_launch_description():
         condition=IfCondition(launch_dome)
         )
 
-    sick_scan_pkg = get_package_share_directory('sick_scan_xd')
-    rear_launch_file = os.path.join(sick_scan_pkg, 'launch', 'sick_multiscan_rear.launch')
-    front_launch_file = os.path.join(sick_scan_pkg, 'launch', 'sick_multiscan_front.launch')
+    # NOTE: resolve these lazily via FindPackageShare (a substitution) rather than
+    # get_package_share_directory(). The substitution is only evaluated when the
+    # SICK nodes actually execute, which is gated by IfCondition(launch_sick) below.
+    # This keeps the launch from crashing at build time when sick_scan_xd isn't
+    # installed (e.g. simulation, or sick:=false) instead of aborting everything.
+    rear_launch_file = PathJoinSubstitution([FindPackageShare('sick_scan_xd'), 'launch', 'sick_multiscan_rear.launch'])
+    front_launch_file = PathJoinSubstitution([FindPackageShare('sick_scan_xd'), 'launch', 'sick_multiscan_front.launch'])
     
     
     # First SICK multiScan (192.168.1.60) - REAR
