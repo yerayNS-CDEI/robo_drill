@@ -146,11 +146,10 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(["'", controller_type, "' == 'omni'"]))
     )
 
-    gantry_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["gantry_position_controller", "--controller-manager", "controller_manager"],
-    )
+    # NOTE: The gantry (manipulator) is no longer spawned here. sim.launch.py is
+    # the base-only simulation bringup; the gantry geometry + gantry_position_controller
+    # live in manipulator.launch.py, started alongside the base by
+    # pokeye_mobile_manipulator.launch.py in full mode.
 
     # Run the spawner node from the ros_gz_sim package.
     spawn_robo_drill = Node(
@@ -223,7 +222,6 @@ def generate_launch_description():
         robot_state_publisher,
         sim_controller_spawner_diff,
         sim_controller_spawner_omni,
-        gantry_controller_spawner,
     ]
     
     # Launch them all!

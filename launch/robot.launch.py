@@ -87,7 +87,7 @@ def generate_launch_description():
             description="Override controller YAMLs so the controller publishes odom and TF.",
         )
     )
-    
+
     # Initialize Arguments
     odom_tf_from_controller = LaunchConfiguration("odom_tf_from_controller")
     mode = LaunchConfiguration("mode")
@@ -177,11 +177,10 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(["'", controller_type, "' == 'omni'"]))
     )
 
-    gantry_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["gantry_position_controller", "--controller-manager", "controller_manager"],
-    )
+    # NOTE: The gantry (manipulator) geometry and gantry_position_controller are
+    # no longer started here. platform.launch.py brings up the base only; the
+    # gantry lives in manipulator.launch.py (started together with the base by
+    # pokeye_mobile_manipulator.launch.py in full mode).
 
     # Delay start of robot_controller after `joint_state_broadcaster`
     delay_robot_controller_spawner_diff = RegisterEventHandler(
@@ -211,22 +210,6 @@ def generate_launch_description():
         condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"]))
     )
 
-    # Delay gantry controller spawner after joint_state_broadcaster
-    delay_gantry_controller_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[gantry_controller_spawner],
-        ),
-        condition=IfCondition(PythonExpression(["'", mode, "' == 'base'"]))
-    )
-
-    # Delayed gantry controller for full mode
-    delayed_gantry_controller_spawner_full_mode = TimerAction(
-        period=8.0,
-        actions=[gantry_controller_spawner],
-        condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"]))
-    )
-
     nodes = [
         control_node,
         robot_state_pub_node,
@@ -236,8 +219,6 @@ def generate_launch_description():
 
         delay_robot_controller_spawner_diff_full_mode,
         delay_robot_controller_spawner_omni_full_mode,
-        delay_gantry_controller_spawner,
-        delayed_gantry_controller_spawner_full_mode
     ]
 
     return LaunchDescription(declared_arguments+ nodes)

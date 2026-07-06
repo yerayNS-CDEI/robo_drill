@@ -794,8 +794,8 @@ class RobotControlUI(QMainWindow):
         return desired_hybrid_sim
 
     def _get_full_control_launch_file(self, hybrid_sim=None):
-        """Full Control brings up the whole robo_drill platform (base + gantry)."""
-        return 'platform.launch.py'
+        """Full Control brings up the whole robo_drill robot (base + gantry manipulator)."""
+        return 'pokeye_mobile_manipulator.launch.py'
 
     def _update_full_control_launch_tooltip(self):
         """Keep the Full Control launch tooltip aligned with the selected launch file."""
@@ -808,8 +808,9 @@ class RobotControlUI(QMainWindow):
             else 'false'
         )
         tooltip = (
-            "ros2 launch robo_drill platform.launch.py "
-            f"sim:=<mode> mode:=full controller_type:=<type> headless:={headless}"
+            "ros2 launch robo_drill pokeye_mobile_manipulator.launch.py "
+            f"sim:=<mode> mode:=full controller_type:=<type> "
+            f"publish_controller_odom_tf:=true launch_rviz:=true headless:={headless}"
         )
         self.btn_full_control_launch.setToolTip(tooltip)
 
@@ -863,13 +864,22 @@ class RobotControlUI(QMainWindow):
         return getattr(self, '_active_planner_context', 'arm')
 
     def _update_joint_control_tab_state(self):
-        """Disable Joint Control only when moveit is selected in the active planner tab."""
+        """Enable the Gantry Control tab only when it is usable.
+
+        The gantry exists only in full mode (mode:=full), so it is disabled while a
+        base (mode:=base) process runs, and also when moveit is selected in the
+        active planner tab.
+        """
         planner_context = self._get_active_planner_context()
         planner_backend = self._get_planner_backend(context=planner_context)
         is_moveit_active = (planner_backend == 'moveit')
 
+        base_running = any(self._is_base_tab_state_process(key) for key in self.process_map)
+
         if hasattr(self, 'tabs') and hasattr(self, 'JOINT_TAB_INDEX'):
-            self.tabs.setTabEnabled(self.JOINT_TAB_INDEX, not is_moveit_active)
+            self.tabs.setTabEnabled(
+                self.JOINT_TAB_INDEX, not is_moveit_active and not base_running
+            )
 
     def _update_full_control_init_box_state(self):
         """Disable Full Control initialization only when sim=true and hybrid_sim=false."""
@@ -918,8 +928,13 @@ class RobotControlUI(QMainWindow):
         # Any base (non-full) process running?
         base_running = any(self._is_base_tab_state_process(key) for key in self.process_map)
 
-        # Disable Full Control while a base process runs (Base + Gantry stay enabled)
+        # Disable Full Control while a base process runs.
         self._set_tab_enabled(self.FULL_CONTROL_TAB_INDEX, not base_running)
+
+        # The gantry only exists in full mode, so the Gantry Control tab is disabled
+        # while a base (mode:=base) process runs. _update_joint_control_tab_state()
+        # accounts for the running base process (and the moveit constraint).
+        self._update_joint_control_tab_state()
 
     def _update_tab_states_for_full_control(self):
         """Update tab states based on full control processes"""
@@ -1577,17 +1592,16 @@ class RobotControlUI(QMainWindow):
         self._update_tab_states_for_base()
 
     def toggle_full_control_launch(self):
-        """Toggle the full robo_drill platform (base + gantry) from the Full Control tab."""
+        """Toggle the full robo_drill mobile manipulator (base + gantry) from the Full Control tab."""
         sim_mode = self.full_control_sim_mode_combo.currentText()
         controller_type = self.full_control_controller_type_combo.currentText()
         headless = self.full_control_headless_combo.currentText()
 
         launch_args = [
-            'launch', 'robo_drill', 'platform.launch.py',
+            'launch', 'robo_drill', self._get_full_control_launch_file(),
             f'sim:={sim_mode}',
             'mode:=full',
             f'controller_type:={controller_type}',
-            'odom_tf_from_controller:=true',
             'publish_controller_odom_tf:=true',
             'launch_rviz:=true',
             f'headless:={headless}',

@@ -20,8 +20,7 @@ def generate_launch_description():
         )
 
     base_package_path = FindPackageShare("robo_drill")
-    arm_package_path = FindPackageShare("arm_control")
-    
+
     declared_arguments = []
     
     # General arguments
@@ -71,9 +70,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "rviz_config_file",
             default_value=PathJoinSubstitution(
-                [FindPackageShare("arm_control"), "rviz", "moveit.rviz"]
+                [base_package_path, "rviz", "view_robot.rviz"]
             ),
-            description="RViz config file for the MoveIt-capable RViz instance",
+            description="RViz config file for the full robot bringup.",
         )
     )
     declared_arguments.append(
@@ -198,27 +197,22 @@ def generate_launch_description():
         ])),
     )
     
-    arm_launch = IncludeLaunchDescription(
+    # The manipulator half of the robot: the gantry geometry + gantry controller.
+    # This is the robo_drill-local replacement for arm_control/arm.launch.py; there
+    # is no separate manipulator package for this robot.
+    manipulator_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
-            PathJoinSubstitution([arm_package_path, 'launch', 'arm.launch.py'])
+            PathJoinSubstitution([base_package_path, 'launch', 'manipulator.launch.py'])
         ]),
         launch_arguments={
             'sim': simulation_mode,
-            'mode': mode,
-            'hybrid_sim': hybrid_sim,
-            'robot_ip': robot_ip,
-            'gazebo_gui': PythonExpression(["'true' if '", mode, "' == 'arm' else 'false'"]),
-            'launch_rviz': launch_rviz,
-            'ethercat_interface': ethercat_interface,
-            'rviz_config_file': rviz_config_file,
-            'planner_backend': planner_backend,
-            'moveit_planning_pipeline': moveit_planning_pipeline,
-            'moveit_pose_planner_id': moveit_pose_planner_id,
-            'moveit_joint_planner_id': moveit_joint_planner_id,
+            'controller_type': controller_type,
             'publish_controller_odom_tf': publish_controller_odom_tf,
-            'namespace_arm': namespace_arm,
+            'ethercat_interface': ethercat_interface,
+            'launch_rviz': launch_rviz,
+            'rviz_config_file': rviz_config_file,
             }.items(),
-        condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"])),
+        condition=IfCondition(PythonExpression(["'", mode, "' == 'full'"])),
     )
-    
-    return LaunchDescription(declared_arguments + [platform_launch, pointcloud_concatenate_launch, arm_launch])
+
+    return LaunchDescription(declared_arguments + [platform_launch, pointcloud_concatenate_launch, manipulator_launch])

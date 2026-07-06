@@ -16,6 +16,7 @@ controller_manager:
 
     sim_controller:
       type: sim_controller/SimController
+      
 diffbot_base_controller:
   ros__parameters:
     left_wheel_names: ["drivewhl_l_joint"]
@@ -82,6 +83,7 @@ gantry_position_controller:
       - gantry_x_joint
       - gantry_rot_joint
     interface_name: position
+
 sim_controller:
   ros__parameters:
     interface_name: 'velocity'
