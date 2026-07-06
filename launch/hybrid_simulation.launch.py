@@ -10,9 +10,9 @@ The key challenge is that Gazebo and URSim have separate TF trees. This launch
 file bridges them using a static transform publisher.
 
 TF Tree Structure:
-- Gazebo provides: odom -> base_footprint -> base_link -> ... -> column_link
+- Gazebo provides: odom -> base_footprint -> base_link -> ... -> gantry_z_link
 - URSim provides:  arm_base_link -> arm_shoulder_link -> ... -> arm_tool0
-- This file adds:  column_link -> world (static transform)
+- This file adds:  gantry_z_link -> world (static transform)
 
 Usage:
     ros2 launch robo_drill hybrid_simulation.launch.py
@@ -308,7 +308,7 @@ def generate_launch_description():
         #    Without this, static transforms will have timestamp 0 while dynamic
         #    transforms use sim_time (~260s), causing TF lookup failures.
         #
-        #    This connects column_link (from base) to world (arm's root frame)
+        #    This connects gantry_z_link (from base) to world (arm's root frame)
         #
         #    From mobile_manipulator.urdf.xacro, the arm mounting transform is:
         #        xyz="0.0 0.0 0.73" rpy="0.0 0.0 -2.3562"
@@ -317,8 +317,8 @@ def generate_launch_description():
         #    The arm's robot_state_publisher creates: world → arm_base_link → ...
         #    We must connect to 'world' to avoid TF conflicts.
         #
-        #    Transform: column_link is parent, world is child
-        #    xyz: 0.0 0.0 0.73 (arm mounting is 0.73m above column_link)
+        #    Transform: gantry_z_link is parent, world is child
+        #    xyz: 0.0 0.0 0.73 (arm mounting is 0.73m above gantry_z_link)
         #    rpy: 0.0 0.0 -2.3562 (arm is rotated -135 degrees around Z)
         # =========================================================================
         static_tf_group = GroupAction([
@@ -339,7 +339,7 @@ def generate_launch_description():
                 '--roll', '0.0',
                 '--pitch', '0.0',
                 '--yaw', '-2.3562',
-                '--frame-id', 'column_link',
+                '--frame-id', 'gantry_z_link',
                 '--child-frame-id', 'world',  # Connect to arm URDF root frame
             ],
             output='screen',

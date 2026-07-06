@@ -357,13 +357,15 @@ class RobotControlUI(QMainWindow):
             "<code>/gantry_position_controller/commands</code>"
         ))
 
-        self.gantry_joint_names = ['gantry_y_joint', 'gantry_x_joint', 'gantry_rot_joint']
+        self.gantry_joint_names = ['gantry_z_joint', 'gantry_y_joint', 'gantry_x_joint', 'gantry_rot_joint']
         self.gantry_joint_labels = {
+            'gantry_z_joint': 'Stage 1 - Lift / Z (m)',
             'gantry_y_joint': 'Stage 2 - Side / Y (m)',
             'gantry_x_joint': 'Stage 3 - Reach / X (m)',
-            'gantry_rot_joint': 'End Rotation / Z (rad)',
+            'gantry_rot_joint': 'End Rotation (rad)',
         }
         self.gantry_joint_limits = {
+            'gantry_z_joint': (0.0, 0.90),
             'gantry_y_joint': (-0.25, 0.25),
             'gantry_x_joint': (0.0, 0.40),
             'gantry_rot_joint': (-3.1416, 3.1416),
@@ -404,7 +406,7 @@ class RobotControlUI(QMainWindow):
         self.btn_send_gantry.clicked.connect(self.send_gantry_command)
         self.btn_send_gantry.setToolTip(
             "ros2 topic pub --once /gantry_position_controller/commands "
-            "std_msgs/msg/Float64MultiArray \"{data: [Y, X, ROT]}\""
+            "std_msgs/msg/Float64MultiArray \"{data: [Z, Y, X, ROT]}\""
         )
         gantry_button_layout.addWidget(self.btn_send_gantry)
 
@@ -830,24 +832,6 @@ class RobotControlUI(QMainWindow):
 
     def _update_moveit_option_visibility(self):
         """Show MoveIt pipeline/planner selectors only when they are relevant."""
-        arm_backend_is_moveit = self._get_planner_backend(context='arm') == 'moveit'
-        arm_pipeline_is_pilz = (
-            hasattr(self, 'arm_moveit_pipeline_combo')
-            and self.arm_moveit_pipeline_combo.currentText() == 'pilz_industrial_motion_planner'
-        )
-        if hasattr(self, 'arm_moveit_pipeline_label'):
-            self.arm_moveit_pipeline_label.setVisible(arm_backend_is_moveit)
-        if hasattr(self, 'arm_moveit_pipeline_combo'):
-            self.arm_moveit_pipeline_combo.setVisible(arm_backend_is_moveit)
-        if hasattr(self, 'arm_moveit_planner_id_label'):
-            self.arm_moveit_planner_id_label.setVisible(
-                arm_backend_is_moveit and arm_pipeline_is_pilz
-            )
-        if hasattr(self, 'arm_moveit_planner_id_combo'):
-            self.arm_moveit_planner_id_combo.setVisible(
-                arm_backend_is_moveit and arm_pipeline_is_pilz
-            )
-
         full_backend_is_moveit = self._get_planner_backend(context='full') == 'moveit'
         full_pipeline_is_pilz = (
             hasattr(self, 'full_control_moveit_pipeline_combo')
@@ -897,17 +881,6 @@ class RobotControlUI(QMainWindow):
 
     def _update_headless_visibility(self):
         """Show simulation-only selectors only when simulation mode is true."""
-        arm_sim_mode = self.arm_sim_mode_combo.currentText() if hasattr(self, "arm_sim_mode_combo") else 'false'
-        arm_planner = self._get_planner_backend(context='arm')
-        # URSim selector is always visible when planner_backend is moveit (must be locked true)
-        arm_ursim_visible = (arm_sim_mode == 'true') or (arm_planner == 'moveit')
-        if hasattr(self, "arm_hybrid_sim_combo") and not arm_ursim_visible:
-            self.arm_hybrid_sim_combo.setCurrentText('false')
-        if hasattr(self, "arm_hybrid_sim_label"):
-            self.arm_hybrid_sim_label.setVisible(arm_ursim_visible)
-        if hasattr(self, "arm_hybrid_sim_combo"):
-            self.arm_hybrid_sim_combo.setVisible(arm_ursim_visible)
-
         base_sim_mode = self.sim_mode_combo.currentText() if hasattr(self, "sim_mode_combo") else 'false'
         base_visible = (base_sim_mode == 'true')
         if hasattr(self, "base_headless_label"):
@@ -2885,7 +2858,7 @@ class RobotControlUI(QMainWindow):
         self._log_append(
             self.joint_status_text,
             "<b style='color: #539bf5;'>&#9654; publish /gantry_position_controller/commands</b> "
-            f"[Y={data[0]:.3f} m, X={data[1]:.3f} m, ROT={data[2]:.3f} rad]"
+            f"[Z={data[0]:.3f} m, Y={data[1]:.3f} m, X={data[2]:.3f} m, ROT={data[3]:.3f} rad]"
         )
 
     def home_gantry(self):
@@ -3005,11 +2978,6 @@ class RobotControlUI(QMainWindow):
 
     def _is_hybrid_sim_enabled(self, context='full'):
         """Return True when the requested tab is using hybrid / URSim mode."""
-        if context == 'arm':
-            if not hasattr(self, "arm_hybrid_sim_combo"):
-                return False
-            return self.arm_hybrid_sim_combo.currentText() == 'true'
-
         if not hasattr(self, "full_control_sim_mode_combo"):
             return False
         return self._sync_full_control_hybrid_sim_state() == 'true'
@@ -3042,33 +3010,22 @@ class RobotControlUI(QMainWindow):
             return '192.168.56.101'
         return '192.168.1.102'
 
-    def _get_planner_backend(self, context='arm'):
-        """Pick planner_backend from the requested tab."""
-        if context == 'full':
-            if hasattr(self, 'full_control_planner_backend_combo'):
-                return self.full_control_planner_backend_combo.currentText()
-            return 'legacy'
-
-        if hasattr(self, 'arm_planner_backend_combo'):
-            return self.arm_planner_backend_combo.currentText()
+    def _get_planner_backend(self, context='full'):
+        """Pick planner_backend from the Full Control tab (defaults to legacy)."""
+        if hasattr(self, 'full_control_planner_backend_combo'):
+            return self.full_control_planner_backend_combo.currentText()
         return 'legacy'
 
-    def _get_moveit_planning_pipeline(self, context='arm'):
-        """Pick the MoveIt planning pipeline from the requested tab."""
-        if context == 'full':
-            if hasattr(self, 'full_control_moveit_pipeline_combo'):
-                return self.full_control_moveit_pipeline_combo.currentText()
-        elif hasattr(self, 'arm_moveit_pipeline_combo'):
-            return self.arm_moveit_pipeline_combo.currentText()
+    def _get_moveit_planning_pipeline(self, context='full'):
+        """Pick the MoveIt planning pipeline from the Full Control tab."""
+        if hasattr(self, 'full_control_moveit_pipeline_combo'):
+            return self.full_control_moveit_pipeline_combo.currentText()
         return 'pilz_industrial_motion_planner'
 
-    def _get_moveit_planner_id(self, context='arm'):
-        """Pick the MoveIt planner id from the requested tab."""
-        if context == 'full':
-            if hasattr(self, 'full_control_moveit_planner_id_combo'):
-                return self.full_control_moveit_planner_id_combo.currentText()
-        elif hasattr(self, 'arm_moveit_planner_id_combo'):
-            return self.arm_moveit_planner_id_combo.currentText()
+    def _get_moveit_planner_id(self, context='full'):
+        """Pick the MoveIt planner id from the Full Control tab."""
+        if hasattr(self, 'full_control_moveit_planner_id_combo'):
+            return self.full_control_moveit_planner_id_combo.currentText()
         return 'PTP'
 
     def _get_moveit_launch_args(self, context='arm'):

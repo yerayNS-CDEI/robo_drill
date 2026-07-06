@@ -177,10 +177,10 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(["'", controller_type, "' == 'omni'"]))
     )
 
-    column_controller_spawner = Node(
+    gantry_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["column_position_controller", "--controller-manager", "controller_manager"],
+        arguments=["gantry_position_controller", "--controller-manager", "controller_manager"],
     )
 
     # Delay start of robot_controller after `joint_state_broadcaster`
@@ -211,19 +211,19 @@ def generate_launch_description():
         condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"]))
     )
 
-    # Delay column controller spawner after joint_state_broadcaster
-    delay_column_controller_spawner = RegisterEventHandler(
+    # Delay gantry controller spawner after joint_state_broadcaster
+    delay_gantry_controller_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner,
-            on_exit=[column_controller_spawner],
+            on_exit=[gantry_controller_spawner],
         ),
         condition=IfCondition(PythonExpression(["'", mode, "' == 'base'"]))
     )
 
-    # Delayed column controller for full mode
-    delayed_column_controller_spawner_full_mode = TimerAction(
+    # Delayed gantry controller for full mode
+    delayed_gantry_controller_spawner_full_mode = TimerAction(
         period=8.0,
-        actions=[column_controller_spawner],
+        actions=[gantry_controller_spawner],
         condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"]))
     )
 
@@ -236,8 +236,8 @@ def generate_launch_description():
 
         delay_robot_controller_spawner_diff_full_mode,
         delay_robot_controller_spawner_omni_full_mode,
-        delay_column_controller_spawner,
-        delayed_column_controller_spawner_full_mode
+        delay_gantry_controller_spawner,
+        delayed_gantry_controller_spawner_full_mode
     ]
 
     return LaunchDescription(declared_arguments+ nodes)

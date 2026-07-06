@@ -50,46 +50,12 @@
         </joint>
     </ros2_control>
 
-    <!-- Column Hardware Interface -->
-    <ros2_control name="column_controller" type="system">
-        <xacro:unless value="$(arg simulation)">
-            <xacro:unless value="$(arg use_mock_hardware)">
-                <hardware>
-                    <plugin>column_hw_interface/ColumnHardwareInterface</plugin>
-                    <param name="column_name">column_joint</param>
-                </hardware>
-            </xacro:unless>
-            <xacro:if value="$(arg use_mock_hardware)">
-                <hardware>
-                    <plugin>mock_components/GenericSystem</plugin>
-                    <param name="calculate_dynamics">true</param>
-                </hardware>
-            </xacro:if>
-        </xacro:unless>
-
-        <xacro:if value="$(arg simulation)">
-            <hardware>
-                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-            </hardware>
-        </xacro:if>
-
-        <joint name="column_joint">
-            <xacro:if value="$(arg simulation)">
-                <command_interface name="effort"/>
-            </xacro:if>
-            <xacro:unless value="$(arg simulation)">
-                <command_interface name="position"/>
-            </xacro:unless>
-            <state_interface name="position"/>
-            <state_interface name="velocity"/>
-        </joint>
-    </ros2_control>
-
-    <!-- Gantry - Stage 2 (Y), Stage 3 (X) and end rotation.
-         Registered so the joint_state_broadcaster publishes their positions
-         (otherwise robot_state_publisher can't place these links and RViz
-         shows them at the world origin). Real gantry hardware is not yet
-         implemented, so non-simulation uses a mock system for now. -->
+    <!-- Gantry - Stage 1 (Z lift), Stage 2 (Y), Stage 3 (X) and end rotation.
+         All four stages are one linear-actuator gantry driven by a single
+         gantry_position_controller. Registered here so the joint_state_broadcaster
+         publishes their positions (otherwise robot_state_publisher can't place
+         these links and RViz shows them at the world origin). Real gantry hardware
+         is not yet implemented, so non-simulation uses a mock system for now. -->
     <ros2_control name="gantry_controller" type="system">
         <xacro:if value="$(arg simulation)">
             <hardware>
@@ -103,6 +69,11 @@
             </hardware>
         </xacro:unless>
 
+        <joint name="gantry_z_joint">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
         <joint name="gantry_y_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>

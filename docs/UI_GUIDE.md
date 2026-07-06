@@ -25,14 +25,15 @@ Brings up and manages the base platform (`mode:=base`):
 ### 2. Gantry Control
 Jogs the on-board 3-stage linear gantry + end rotation by publishing to
 `/gantry_position_controller/commands` (`std_msgs/Float64MultiArray`, order
-`[gantry_y, gantry_x, gantry_rot]`):
+`[gantry_z, gantry_y, gantry_x, gantry_rot]`):
+- **Stage 1 – Lift / Z (m)**  – range 0.0 … 0.90
 - **Stage 2 – Side / Y (m)**  – range −0.25 … 0.25
 - **Stage 3 – Reach / X (m)** – range 0.0 … 0.40
-- **End Rotation / Z (rad)**  – range −π … π
+- **End Rotation (rad)**      – range −π … π
 - **Send Gantry Command** publishes the current slider targets; **Home (0,0,0)** re-centres.
 
-> The vertical lift (Stage 1 / column, `column_joint`) is driven by its own
-> controller (`column_controller`) and is not exposed here yet.
+All four stages (including the vertical Z lift, formerly the separate `column_joint`)
+are one gantry driven by the single `gantry_position_controller`.
 
 ### 3. Full Control
 Same platform stack as Base Control but in `mode:=full` (base + gantry brought up

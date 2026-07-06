@@ -185,9 +185,9 @@
           filename="package://robo_drill/robo_drill_description/meshes/turret_textured.dae" />
       </geometry>
     </visual>
-    <!-- Fixed outer sleeve for the lifting column.
-         The prismatic child link is the moving inner column; this sleeve keeps the
-         structure visually connected when the column is extended. -->
+    <!-- Fixed outer sleeve for the vertical (Z) gantry stage.
+         The prismatic child link (gantry_z_link) is the moving inner stage; this
+         sleeve keeps the structure visually connected when the stage is extended. -->
     <visual>
       <origin
         xyz="0.2905 0 0.45"
@@ -321,7 +321,7 @@
 
   
   <link
-    name="column_link">
+    name="gantry_z_link">
     <inertial>
       <origin
         xyz="0 0 0.0"
@@ -358,7 +358,7 @@
     </collision>
   </link>
   <joint
-    name="column_joint"
+    name="gantry_z_joint"
     type="prismatic">
     <origin
       xyz="0.2905 0 0"
@@ -366,7 +366,7 @@
     <parent
       link="turret_link" />
     <child
-      link="column_link" />
+      link="gantry_z_link" />
         <axis
     xyz="0 0 1" />
   <limit
@@ -378,14 +378,14 @@
 
   <!-- ============================================================= -->
   <!-- Pokeye 3-stage linear-actuator gantry + end rotation.         -->
-  <!-- Stage 1 (vertical Z lift) is the column above.                -->
+  <!-- Stage 1 (gantry_z_joint) vertical/Z lift is the joint above.   -->
   <!-- Stage 2 (gantry_y_joint) sideways/Y motion.                   -->
   <!-- Stage 3 (gantry_x_joint) reach/X motion.                      -->
   <!-- End (gantry_rot_joint) tool rotation about Z.                 -->
   <!-- Geometry is placeholder rectangular prisms; refine as needed. -->
   <!-- ============================================================= -->
 
-  <!-- Stage 2 - side (Y) carriage, mounted on top of the column -->
+  <!-- Stage 2 - side (Y) carriage, mounted on top of the Z stage -->
   <link name="gantry_y_link">
     <inertial>
       <origin xyz="0 0 0.05" rpy="0 0 0" />
@@ -411,7 +411,7 @@
   </link>
   <joint name="gantry_y_joint" type="prismatic">
     <origin xyz="0 0 0.73" rpy="0 0 0" />
-    <parent link="column_link" />
+    <parent link="gantry_z_link" />
     <child link="gantry_y_link" />
     <axis xyz="0 1 0" />
     <limit lower="-0.25" upper="0.25" effort="500.0" velocity="0.2" />
@@ -491,7 +491,7 @@
       <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="column_link">
+  <gazebo reference="gantry_z_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
