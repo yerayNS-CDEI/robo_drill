@@ -545,9 +545,12 @@ install(PROGRAMS
     python_nodes/odom_plot.py
     python_nodes/dynamic_footprint_publisher.py
     utils/imu_to_yaw.py
-    ui/UI.py
 
     DESTINATION lib/${PROJECT_NAME})
+
+# Symlink the Robot Control UI as `UI` (no extension) so it runs as
+# `ros2 run robo_drill UI` and stays live-editable with --symlink-install.
+install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${CMAKE_CURRENT_SOURCE_DIR}/ui/UI.py\" \"${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME}/UI\")")
 
 # Install the UI's helper package (UI_utils) next to the UI executable so
 # `from UI_utils.qtermwidget_wrapper import QTermWidget` resolves at runtime.

@@ -7,7 +7,7 @@ GPR API tooling have been removed since this robot has no separate manipulator a
 ## Launching
 
 ```bash
-ros2 run robo_drill UI.py
+ros2 run robo_drill UI
 ```
 
 Requirements: `python3-pyqt5` and `QTermWidget` (`sudo apt install libqtermwidget5-0`).
