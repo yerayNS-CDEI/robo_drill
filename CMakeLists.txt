@@ -545,8 +545,15 @@ install(PROGRAMS
     python_nodes/odom_plot.py
     python_nodes/dynamic_footprint_publisher.py
     utils/imu_to_yaw.py
+    ui/UI.py
 
     DESTINATION lib/${PROJECT_NAME})
+
+# Install the UI's helper package (UI_utils) next to the UI executable so
+# `from UI_utils.qtermwidget_wrapper import QTermWidget` resolves at runtime.
+install(DIRECTORY ui/UI_utils
+    DESTINATION lib/${PROJECT_NAME}
+    FILES_MATCHING PATTERN "*.py")
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()

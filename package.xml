@@ -56,6 +56,8 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>urdfdom</depend>
   <depend>srdfdom</depend>
+  <!-- Robot Control UI (ui/UI.py) -->
+  <exec_depend>python3-pyqt5</exec_depend>
   <exec_depend>depthai_ros_driver</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>pcl_ros</exec_depend>
