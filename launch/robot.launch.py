@@ -177,6 +177,14 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(["'", controller_type, "' == 'omni'"]))
     )
 
+    # Hydraulic valve + caster brake. Base hardware, so it spawns for both the
+    # diff and omni controller types.
+    base_actuators_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["base_actuators_controller", "--controller-manager", "controller_manager"],
+    )
+
     # NOTE: The gantry (manipulator) geometry and gantry_position_controller are
     # no longer started here. platform.launch.py brings up the base only; the
     # gantry lives in manipulator.launch.py (started together with the base by
@@ -210,6 +218,19 @@ def generate_launch_description():
         condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"]))
     )
 
+    delay_base_actuators_controller_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[base_actuators_controller_spawner],
+        ),
+        condition=IfCondition(PythonExpression(["'", mode, "' == 'base'"]))
+    )
+    delay_base_actuators_controller_spawner_full_mode = TimerAction(
+        period=8.0,
+        actions=[base_actuators_controller_spawner],
+        condition=UnlessCondition(PythonExpression(["'", mode, "' == 'base'"]))
+    )
+
     nodes = [
         control_node,
         robot_state_pub_node,
@@ -219,6 +240,9 @@ def generate_launch_description():
 
         delay_robot_controller_spawner_diff_full_mode,
         delay_robot_controller_spawner_omni_full_mode,
+
+        delay_base_actuators_controller_spawner,
+        delay_base_actuators_controller_spawner_full_mode,
     ]
 
     return LaunchDescription(declared_arguments+ nodes)

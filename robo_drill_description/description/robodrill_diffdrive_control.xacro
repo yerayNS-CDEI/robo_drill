@@ -91,6 +91,46 @@
         </joint>
     </ros2_control>
 
+    <!-- Base-mounted actuators - hydraulic valve and caster brake motor.
+         Both are on/off, so they are <gpio> components rather than joints: they
+         have no position to report and move nothing, and modelling them as joints
+         would put a fictitious position on /joint_states. Their links live in
+         pokeye_base.urdf on fixed joints, for visualisation only.
+
+         Kept in their own system rather than added to robo_drill_diffdrive_controller
+         because RobodrillHardwareInterface only exports the wheel and turret
+         interfaces; listing these there would ask it for interfaces it does not
+         implement.
+
+         Unlike the gantry above, this system uses mock hardware in simulation too:
+         GazeboSimSystem only handles joints and would not export these gpio
+         interfaces, so the controller could never activate against it. Gazebo has
+         nothing to contribute to an electrical output anyway. Swap the plugin for
+         the real one once the valve and brake are wired up. -->
+    <ros2_control name="base_actuators" type="system">
+        <hardware>
+            <plugin>mock_components/GenericSystem</plugin>
+            <param name="mock_gpio_commands">true</param>
+        </hardware>
+
+        <!-- initial_value is not cosmetic: without it the mock hardware reports
+             NaN until something writes a command, so the brake would read
+             "unknown" rather than "released" at startup. 0.0 = valve closed,
+             brake released. -->
+        <gpio name="hydraulic_valve">
+            <command_interface name="open"/>
+            <state_interface name="open">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+        </gpio>
+        <gpio name="caster_brake">
+            <command_interface name="engaged"/>
+            <state_interface name="engaged">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+        </gpio>
+    </ros2_control>
+
     <xacro:if value="$(arg simulation)">
         <xacro:if value="$(arg base_only)">
             <!-- The Gz Sim plugin launches the controller manager with it. With real hardware we would need

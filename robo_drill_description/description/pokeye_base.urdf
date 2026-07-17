@@ -27,6 +27,18 @@
   <xacro:property name="drill_tip_pitch" value="-1.5708"/>
   <xacro:property name="drill_tip_yaw" value="0.0"/>
 
+  <!-- ===== Base-mounted actuator mount points ============================= -->
+  <!-- Both sit forward of base_link origin (+x) and above it (+z), below the  -->
+  <!-- turret mount (z = 0.2575). The brake motor is the further one in +x.    -->
+  <!-- These offsets are a PLACEHOLDER: measure the real mounting positions    -->
+  <!-- on the chassis and update them here.                                    -->
+  <xacro:property name="hydraulic_valve_x" value="0.71"/>
+  <xacro:property name="hydraulic_valve_y" value="0.0"/>
+  <xacro:property name="hydraulic_valve_z" value="0.15"/>
+  <xacro:property name="caster_brake_x" value="0.79"/>
+  <xacro:property name="caster_brake_y" value="0.0"/>
+  <xacro:property name="caster_brake_z" value="0.15"/>
+
   <link
     name="base_link">
     <inertial>
@@ -251,6 +263,73 @@
       <parent link="base_footprint"/>
       <child link="base_link"/>
       <origin xyz="-0.167 0.0 0.125" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================= -->
+  <!-- Base-mounted actuators: hydraulic valve and caster brake.     -->
+  <!-- Both are on/off devices, commanded as ros2_control <gpio>     -->
+  <!-- components (see robodrill_diffdrive_control.xacro), not as    -->
+  <!-- joints - neither has a position, and neither moves anything   -->
+  <!-- relative to the chassis.                                      -->
+  <!--                                                               -->
+  <!-- The links below exist purely to show where the hardware sits: -->
+  <!-- robot_state_publisher gives them a static TF and RViz renders -->
+  <!-- them, with no controller or joint state involved. The fixed   -->
+  <!-- joints are what makes that free - a movable joint would need  -->
+  <!-- ros2_control to publish a position that does not exist.       -->
+  <!-- Mass and box sizes are PLACEHOLDER: measure the real units.   -->
+  <!-- ============================================================= -->
+
+  <!-- Hydraulic valve -->
+  <link name="hydraulic_valve_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.5" />
+      <inertia ixx="0.00083" ixy="0.0" ixz="0.0"
+               iyy="0.00083" iyz="0.0" izz="0.00083" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.08 0.08 0.08" />
+      </geometry>
+      <material name="">
+        <color rgba="0.1 0.4 0.8 1" />
+      </material>
+    </visual>
+  </link>
+  <joint name="hydraulic_valve_joint" type="fixed">
+    <origin
+      xyz="${hydraulic_valve_x} ${hydraulic_valve_y} ${hydraulic_valve_z}"
+      rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="hydraulic_valve_link" />
+  </joint>
+
+  <!-- Caster brake motor -->
+  <link name="caster_brake_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.5" />
+      <inertia ixx="0.00083" ixy="0.0" ixz="0.0"
+               iyy="0.00083" iyz="0.0" izz="0.00083" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.10 0.10 0.12" />
+      </geometry>
+      <material name="">
+        <color rgba="0.8 0.3 0.1 1" />
+      </material>
+    </visual>
+  </link>
+  <joint name="caster_brake_joint" type="fixed">
+    <origin
+      xyz="${caster_brake_x} ${caster_brake_y} ${caster_brake_z}"
+      rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="caster_brake_link" />
   </joint>
 
   <link

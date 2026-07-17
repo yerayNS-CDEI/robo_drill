@@ -146,6 +146,15 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(["'", controller_type, "' == 'omni'"]))
     )
 
+    # Hydraulic valve + caster brake. Base hardware, so it spawns for both the
+    # diff and omni controller types.
+    base_actuators_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["base_actuators_controller", "--controller-manager", "controller_manager"],
+        condition=IfCondition(PythonExpression(["'", mode, "' == 'base'"]))
+    )
+
     # NOTE: The gantry (manipulator) is no longer spawned here. sim.launch.py is
     # the base-only simulation bringup; the gantry geometry + gantry_position_controller
     # live in manipulator.launch.py, started alongside the base by
@@ -157,8 +166,8 @@ def generate_launch_description():
         executable='create',
         arguments=['-topic', 'robot_description',
                     '-name', 'robo_drill',
-                    '-x', '2.0',
-                    '-y', '-2.0',
+                    '-x', '8.0',
+                    '-y', '-10.0',
                     '-z', '0.22'],
         output='screen',
         condition=IfCondition(PythonExpression(["'", mode, "' == 'base'"]))
@@ -222,6 +231,7 @@ def generate_launch_description():
         robot_state_publisher,
         sim_controller_spawner_diff,
         sim_controller_spawner_omni,
+        base_actuators_controller_spawner,
     ]
     
     # Launch them all!

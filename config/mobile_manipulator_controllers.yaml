@@ -56,6 +56,9 @@
     gantry_position_controller:
       type: forward_command_controller/ForwardCommandController
 
+    base_actuators_controller:
+      type: gpio_controllers/GpioCommandController
+
     sim_controller:
       type: sim_controller/SimController
 
@@ -252,6 +255,30 @@
       - stage3_horizontal_joint
       - stage4_rotate_joint
     interface_name: position
+
+# Base-mounted actuators: hydraulic valve and caster brake motor.
+# On/off gpio outputs, not joints. Command with 1.0 / 0.0 on
+# /base_actuators_controller/commands (control_msgs/DynamicInterfaceGroupValues);
+# state is echoed on /base_actuators_controller/gpio_states.
+/**/base_actuators_controller:
+  ros__parameters:
+    gpios:
+      - hydraulic_valve
+      - caster_brake
+    command_interfaces:
+      hydraulic_valve:
+        interfaces:
+          - open
+      caster_brake:
+        interfaces:
+          - engaged
+    state_interfaces:
+      hydraulic_valve:
+        interfaces:
+          - open
+      caster_brake:
+        interfaces:
+          - engaged
 
 sim_controller:
   ros__parameters:
