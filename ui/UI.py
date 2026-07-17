@@ -84,7 +84,7 @@ class RobotControlUI(QMainWindow):
         # Persistent publishers for emergency stop topics (keyed by topic name), created on demand
         self._emergency_stop_publishers = {}
         # Publisher for jogging the on-board gantry (Gantry Control tab).
-        # Order matches gantry_position_controller joints: [gantry_y, gantry_x, gantry_rot].
+        # Order matches gantry_position_controller joints: [gantry_lift2, gantry_lateral, gantry_rotate].
         self.gantry_cmd_publisher = self.node.create_publisher(
             Float64MultiArray, '/gantry_position_controller/commands', 10
         )
@@ -142,7 +142,7 @@ class RobotControlUI(QMainWindow):
         )
         self.current_goal_handle = None
  
-        self.setWindowTitle("Robot Control Panel")
+        self.setWindowTitle("Pokeye Robot Control Panel")
         self.setGeometry(100, 100, 1200, 700)
  
         # Set window icon
@@ -345,18 +345,18 @@ class RobotControlUI(QMainWindow):
             "<code>/gantry_position_controller/commands</code>"
         ))
 
-        self.gantry_joint_names = ['gantry_z_joint', 'gantry_y_joint', 'gantry_x_joint', 'gantry_rot_joint']
+        self.gantry_joint_names = ['gantry_lift1_joint', 'gantry_lift2_joint', 'gantry_lateral_joint', 'gantry_rotate_joint']
         self.gantry_joint_labels = {
-            'gantry_z_joint': 'Stage 1 - Lift / Z (m)',
-            'gantry_y_joint': 'Stage 2 - Side / Y (m)',
-            'gantry_x_joint': 'Stage 3 - Reach / X (m)',
-            'gantry_rot_joint': 'End Rotation (rad)',
+            'gantry_lift1_joint': 'Stage 1 - Lift 1 / vertical (m)',
+            'gantry_lift2_joint': 'Stage 2 - Lift 2 / vertical (m)',
+            'gantry_lateral_joint': 'Stage 3 - Lateral / horizontal Y (m)',
+            'gantry_rotate_joint': 'Stage 4 - End Rotation (rad)',
         }
         self.gantry_joint_limits = {
-            'gantry_z_joint': (0.0, 0.90),
-            'gantry_y_joint': (-0.25, 0.25),
-            'gantry_x_joint': (0.0, 0.40),
-            'gantry_rot_joint': (-3.1416, 3.1416),
+            'gantry_lift1_joint': (-0.47, 0.40),
+            'gantry_lift2_joint': (0.0, 1.0),
+            'gantry_lateral_joint': (-0.196, 0.196),
+            'gantry_rotate_joint': (-3.1416, 3.1416),
         }
         self.gantry_scale = 1000  # slider integer scale
 
@@ -501,7 +501,7 @@ class RobotControlUI(QMainWindow):
         full_control_mapping_layout.addWidget(self.btn_full_control_emergency_stop)
 
         full_control_mapping_layout.addStretch()
-        full_control_boxes_layout.addWidget(full_control_mapping_box)
+        full_control_boxes_layout.addWidget(full_control_mapping_box, 1)
 
         # Troubleshooting Box (Full Control)
         full_control_troubleshooting_box = QGroupBox("Troubleshooting")
@@ -591,7 +591,7 @@ class RobotControlUI(QMainWindow):
         full_control_troubleshooting_layout.addLayout(process_selector_layout)
 
         full_control_troubleshooting_layout.addStretch()
-        full_control_boxes_layout.addWidget(full_control_troubleshooting_box)
+        full_control_boxes_layout.addWidget(full_control_troubleshooting_box, 1)
 
         # Status display for Full Control tab
         full_control_terminal_status_layout = QHBoxLayout()
@@ -3291,17 +3291,15 @@ class RobotControlUI(QMainWindow):
         controls_row.addWidget(self.fsm_sim_combo)
 
         controls_row.addSpacing(16)
-        controls_row.addWidget(QLabel("Planner Backend:"))
-        self.fsm_planner_combo = QComboBox()
-        self.fsm_planner_combo.addItems(["legacy", "moveit"])
-        controls_row.addWidget(self.fsm_planner_combo)
-
-        controls_row.addSpacing(16)
         controls_row.addWidget(QLabel("Initial State:"))
         self.fsm_state_combo = QComboBox()
         self.fsm_state_combo.addItems([
-            "ScanWall", "CreateMap", "ObjectID", "GeometryReconstruction", "ScanFloor",
-            "Armfolding", "ArmUnfolding", "NavigateToPose",
+            "Initialization", "ReceiveNav2Map", "GetSemanticMap", "WaitForData",
+            "TargetSelection", "ManipulatorFolding", "BasePlacementComputation",
+            "NavigateToTarget", "ManipulatorReachability", "NearbyPointSelection",
+            "ManipulatorUnfolding", "DrillApproach", "SuctionDrillStart", "Drilling",
+            "TakeOutDrill", "SuctionDrillStop", "DrillRetract", "SampleScanning",
+            "StoringToDatabase", "HomePosition", "Finished", "Error",
         ])
         controls_row.addWidget(self.fsm_state_combo)
 
@@ -3378,7 +3376,6 @@ class RobotControlUI(QMainWindow):
 
     def _start_fsm(self):
         sim = self.fsm_sim_combo.currentText()
-        planner = self.fsm_planner_combo.currentText()
         state = self.fsm_state_combo.currentText()
 
         self.btn_fsm_start.setText("Stop FSM")
@@ -3406,7 +3403,6 @@ class RobotControlUI(QMainWindow):
         node_args = [
             'run', 'task_planner_fsm', 'fsm_node',
             '--sim', sim,
-            '--planner-backend', planner,
             '--initial-state', state,
         ]
         QTimer.singleShot(3000, lambda: self._start_fsm_node(node_args))

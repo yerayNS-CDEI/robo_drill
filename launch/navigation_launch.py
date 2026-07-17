@@ -162,7 +162,7 @@ def generate_launch_description():
 
     declare_use_dynamic_footprint_cmd = DeclareLaunchArgument(
         'use_dynamic_footprint',
-        default_value='true',
+        default_value='false',
         description='Launch dynamic footprint publisher for arm-aware costmap footprint updates')
 
     declare_custom_recovery_behaviors_cmd = DeclareLaunchArgument(

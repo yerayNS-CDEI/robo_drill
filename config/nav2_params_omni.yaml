@@ -129,9 +129,10 @@ controller_server:
     controller_plugins: ["FollowPath"]
     odom_topic: "/rtabmap/odom"
     progress_checker:
-      plugin: "nav2_controller::SimpleProgressChecker"
+      plugin: "nav2_controller::PoseProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 5.0
+      required_movement_angle: 0.1
+      movement_time_allowance: 10.0
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       # Strict defaults for localization. navigation_launch.py can override these
@@ -220,11 +221,10 @@ local_costmap:
       width: 6
       height: 6
       resolution: 0.05
-      # Default base footprint (octagon ~0.6 m) instead of robot_radius so the costmap
-      # runs in polygon mode (use_radius_=false). This lets SmacPlannerHybrid and the DWB
-      # ObstacleFootprint critic collision-check the actual polygon. The dynamic footprint
-      # publisher overrides these points at runtime with the arm-aware shape.
-      footprint: "[ [0.6, 0.0], [0.424, 0.424], [0.0, 0.6], [-0.424, 0.424], [-0.6, 0.0], [-0.424, -0.424], [0.0, -0.6], [0.424, -0.424] ]"
+      # Static circle large enough to cover the full base + turret body at any rotation
+      # angle. The dynamic footprint publisher is disabled; radius 0.85 m is derived from
+      # the worst-case rear-corner distance (~0.80 m) plus margin.
+      robot_radius: 0.85
       footprint_padding: 0.0
       plugins: ["obstacle_layer", "inflation_layer"]
       inflation_layer:
@@ -264,10 +264,9 @@ global_costmap:
       global_frame: map
       robot_base_frame: turret_footprint
       use_sim_time: True
-      # NavFn is point-based, so the global costmap stays circular here. The dynamic
-      # arm footprint is applied only at the local costmap (see below), avoiding global
-      # start-in-collision failures while still reacting to the arm during motion.
-      robot_radius: 0.6
+      # Static circle covering the full base + turret body at any rotation angle (same
+      # as the local costmap radius; dynamic arm footprint publisher is disabled).
+      robot_radius: 0.85
       footprint_padding: 0.0
       resolution: 0.05
       track_unknown_space: true

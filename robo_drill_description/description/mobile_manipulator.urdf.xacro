@@ -78,24 +78,24 @@
 
     <!-- Front-right Sick lidar -->
     <xacro:sick_multiscan_sensor
-        parent_link="os_sensor_mount"
+        parent_link="turret_link"
         namespace="front"
         sick_link="front_sick_scan" 
         sick_scan_link="front_sick"
         sick_imu_link="front_sick_imu"
-        origin_xyz="-0.002 0.243 -0.081"  
-        origin_rpy="1.130 0.938 1.453"
+        origin_xyz="0.38 -0.35 0.08"  
+        origin_rpy="0.0 0.0 0.0"
     />
 
     <!-- Sick lidar at back-left of robot -->
     <xacro:sick_multiscan_sensor
-        parent_link="os_sensor_mount"
+        parent_link="turret_link"
         namespace="rear"
         sick_link="rear_sick_scan"
         sick_scan_link="rear_sick"
         sick_imu_link="rear_sick_imu"
-        origin_xyz="-0.002 -0.252 -0.788"
-        origin_rpy="-1.98 -0.973 -1.496"
+        origin_xyz="-0.42 0.35 0.08"
+        origin_rpy="0.0 0.0 0.0"
 
     />
 
@@ -134,7 +134,7 @@
     />
 
     <!-- Pokeye has no UR10e manipulator. The 3-stage linear-actuator gantry
-         (gantry_z_link -> gantry_y_link -> gantry_x_link -> gantry_rot_link) is
+         (gantry_lift1_link -> gantry_lift2_link -> gantry_lateral_link -> gantry_rotate_link) is
          defined in pokeye_base.urdf and is shared by both robo_drill.urdf.xacro
          and this file. The former UR10e + sensor_plate mount has been removed. -->
 

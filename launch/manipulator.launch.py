@@ -52,7 +52,7 @@ def generate_launch_description():
         )
 
     package_path = FindPackageShare("robo_drill")
-    params_file = PathJoinSubstitution([package_path, 'config/diffdrive_controllers.yaml'])
+    params_file = PathJoinSubstitution([package_path, 'config/mobile_manipulator_controllers.yaml'])
 
     # Declare arguments (kept aligned with platform.launch.py / robot.launch.py)
     declared_arguments = []

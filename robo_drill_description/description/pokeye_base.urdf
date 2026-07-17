@@ -14,28 +14,42 @@
   <xacro:property name="friction_coefficient_2" value="10"/>
   <xacro:property name="support_height" value="0.509"/>
 
+  <!-- ===== Drill tool-tip frame =========================================== -->
+  <!-- `drill_tip` is a fixed frame at the tip of the drill bit, rigidly       -->
+  <!-- attached to the last moving link (gantry_rotate_link). The drill body   -->
+  <!-- extends along -Z of gantry_rotate_link (see its collision box, which    -->
+  <!-- spans z = 0 .. -0.15). These offsets are a PLACEHOLDER: measure the     -->
+  <!-- real bit-tip position/orientation on the tool and update them here.     -->
+  <xacro:property name="drill_tip_x" value="-0.40"/>
+  <xacro:property name="drill_tip_y" value="0.0"/>
+  <xacro:property name="drill_tip_z" value="0.10"/>
+  <xacro:property name="drill_tip_roll" value="0.0"/>
+  <xacro:property name="drill_tip_pitch" value="-1.5708"/>
+  <xacro:property name="drill_tip_yaw" value="0.0"/>
+
   <link
     name="base_link">
     <inertial>
+      <!-- CoM biased forward along +x of base_link (toward the turret/front) -->
       <origin
-        xyz="0.0 0.0 0.0"
+        xyz="0.30 0.0 0.0"
         rpy="0 0 0" />
-      <mass value="30.0"/>
+      <mass value="15.0"/>
       <inertia
-        ixx="0.5080847489159819"
-        ixy="2.8242648578224556e-14"
-        ixz="-0.006994219218769546"
-        iyy="0.8214117015994189"
-        iyz="-4.079580458555823e-16"
-        izz="1.00356044778484"/>
+        ixx="0.25404237445799095"
+        ixy="1.4121324289112278e-14"
+        ixz="-0.003497109609384773"
+        iyy="0.41070585079970945"
+        iyz="-2.0397902292779115e-16"
+        izz="0.50178022389242"/>
     </inertial>
     <visual>
       <origin
-        xyz="0.167 0 0"
-        rpy="-1.5708 0 0" />
+        xyz="-0.075 0 0.22"
+        rpy="1.5708 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/base.STL"  scale="0.001 0.001 0.001"/>
+          filename="package://robo_drill/robo_drill_description/meshes/d_base_v2.stl"  scale="0.001 0.001 0.001"/>
       </geometry>
       <material
         name="">
@@ -45,11 +59,11 @@
     </visual>
     <collision>
       <origin
-        xyz="0.167 0 0"
-        rpy="-1.5708 0 0" />
+        xyz="-0.075 0 0.22"
+        rpy="1.5708 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/base.STL"  scale="0.001 0.001 0.001"/>
+          filename="package://robo_drill/robo_drill_description/meshes/d_base_v2.stl"  scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -60,14 +74,14 @@
         xyz="-2.77555756156289E-17 1.38777878078145E-17 -0.00433895556276356"
         rpy="0 0 0" />
       <mass
-        value="54.4811070994725" />
+        value="27.24055354973625" />
       <inertia
-        ixx="0.271970071358888"
-        ixy="38.8229081044536E-18"
-        ixz="-98.2514219676396E-19"
-        iyy="0.271970071358888"
-        iyz="-14.835547965569E-18"
-        izz="0.406237456171365" />
+        ixx="0.135985035679444"
+        ixy="19.4114540522268E-18"
+        ixz="-49.1257109838198E-19"
+        iyy="0.135985035679444"
+        iyz="-7.4177739827845E-18"
+        izz="0.2031187280856825" />
     </inertial>
     <visual>
       <origin
@@ -97,7 +111,7 @@
     name="drivewhl_r_joint"
     type="continuous">
     <origin
-      xyz="0 -0.18275 0"
+      xyz="0 -0.40275 0"
       rpy="-1.5708 0 0" />
     <parent
       link="base_link" />
@@ -114,14 +128,14 @@
         xyz="2.77555756156289E-17 0 -0.00433895556276352"
         rpy="0 0 0" />
       <mass
-        value="54.4811070994725" />
+        value="27.24055354973625" />
       <inertia
-        ixx="0.271970071358888"
-        ixy="-21.0430159738359E-18"
-        ixz="23.1434079223426E-19"
-        iyy="0.271970071358888"
-        iyz="57.5967249283194E-19"
-        izz="0.406237456171365" />
+        ixx="0.135985035679444"
+        ixy="-10.52150798691795E-18"
+        ixz="11.5717039611713E-19"
+        iyy="0.135985035679444"
+        iyz="28.7983624641597E-19"
+        izz="0.2031187280856825" />
     </inertial>
     <visual>
       <origin
@@ -151,7 +165,7 @@
     name="drivewhl_l_joint"
     type="continuous">
     <origin
-      xyz="0 0.18275 0"
+      xyz="0 0.40275 0"
       rpy="-1.5708 0 0" />
     <parent
       link="base_link" />
@@ -165,7 +179,7 @@
     name="turret_link">
     <inertial>
       <origin
-        xyz="0.05 0 0.05"
+        xyz="0.40 0 0.05"
         rpy="0 0 0" />
       <mass value="10.0"/>
       <inertia
@@ -178,36 +192,42 @@
     </inertial>
     <visual>
       <origin
-        xyz="0 0 0.009"
-        rpy="0 0 0" />
+        xyz="0 0 0"
+        rpy="1.5708 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/turret_textured.dae" />
-      </geometry>
-    </visual>
-    <!-- Fixed outer sleeve for the vertical (Z) gantry stage.
-         The prismatic child link (gantry_z_link) is the moving inner stage; this
-         sleeve keeps the structure visually connected when the stage is extended. -->
-    <visual>
-      <origin
-        xyz="0.2905 0 0.45"
-        rpy="0 0 0" />
-      <geometry>
-        <box size="0.10 0.12 0.9" />
+          filename="package://robo_drill/robo_drill_description/meshes/d_p_estructura_redesing.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <!-- Fixed outer sleeve for the vertical (Z) gantry stage.
+         The prismatic child link (gantry_lift1_link) is the moving inner stage; this
+         sleeve keeps the structure visually connected when the stage is extended. -->
+    <visual>
+      <origin
+        xyz="0.28 0.07 -0.047"
+        rpy="0 0 3.1416" />
+      <geometry>
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_1_v3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
       <origin
-              xyz="0 0 0.009"
-              rpy="0 0 0" />
+        xyz="0 0 0"
+        rpy="1.5708 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/turret_textured.dae" scale="1.01 1.01 1.01"/>
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_1_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -215,7 +235,7 @@
     name="turret_joint"
     type="continuous">
     <origin
-      xyz="0.167 0 0.2575"
+      xyz="0.40 0 0.2575"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -223,7 +243,7 @@
       link="turret_link" />
     <axis
       xyz="0 0 1" />
-  </joint>
+  </joint>  
   
   <link name="base_footprint"/>
 
@@ -241,8 +261,8 @@
   <link name="turret_caster_fl">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.05"/>
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+      <mass value="0.025"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
     </inertial>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -261,8 +281,8 @@
   <link name="turret_caster_fr">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.05"/>
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+      <mass value="0.025"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
     </inertial>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -281,8 +301,8 @@
   <link name="turret_caster_bl">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.05"/>
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+      <mass value="0.025"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
     </inertial>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -301,8 +321,8 @@
   <link name="turret_caster_br">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.05"/>
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001"/>
+      <mass value="0.025"/>
+      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
     </inertial>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -321,44 +341,46 @@
 
   
   <link
-    name="gantry_z_link">
+    name="gantry_lift1_link">
     <inertial>
       <origin
         xyz="0 0 0.0"
         rpy="0 0 0" />
-      <mass value="1.0"/>
+      <mass value="0.5"/>
       <inertia
-        ixx="0.04494166666666667"
+        ixx="0.022470833333333335"
         ixy="0.0"
         ixz="0.0"
-        iyy="0.044708333333333336"
+        iyy="0.022354166666666668"
         iyz="0.0"
-        izz="0.0008333333333333334"/>
+        izz="0.0004166666666666667"/>
     </inertial>
     <visual>
       <origin
-        xyz="0 0 0.365"
-        rpy="0 0 0" />
+        xyz="0.12 0.036 0.38"
+        rpy="0.0262 0 0" />
       <geometry>
-        <box size="0.10 0.12 0.73" />
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_2_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material
         name="">
         <color
-          rgba="0.8 0.8 0.8 1" />
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
       <origin
-        xyz="0 0 0.365"
-        rpy="0 0 0" />
+        xyz="0.12 0.036 0.38"
+        rpy="0.0262 0 0" />
       <geometry>
-        <box size="0.10 0.12 0.73" />
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_2_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
   <joint
-    name="gantry_z_joint"
+    name="gantry_lift1_joint"
     type="prismatic">
     <origin
       xyz="0.2905 0 0"
@@ -366,106 +388,101 @@
     <parent
       link="turret_link" />
     <child
-      link="gantry_z_link" />
+      link="gantry_lift1_link" />
         <axis
     xyz="0 0 1" />
   <limit
-    lower="0.0"
-    upper="0.9"
+    lower="-0.47"
+    upper="0.40"
     effort="1000.0"
     velocity="0.1" />
   </joint>
 
   <!-- ============================================================= -->
   <!-- Pokeye 3-stage linear-actuator gantry + end rotation.         -->
-  <!-- Stage 1 (gantry_z_joint) vertical/Z lift is the joint above.   -->
-  <!-- Stage 2 (gantry_y_joint) sideways/Y motion.                   -->
-  <!-- Stage 3 (gantry_x_joint) reach/X motion.                      -->
-  <!-- End (gantry_rot_joint) tool rotation about Z.                 -->
+  <!-- Stage 1 (gantry_lift1_joint) vertical lift is the joint above. -->
+  <!-- Stage 2 (gantry_lift2_joint) second vertical lift.             -->
+  <!-- Stage 3 (gantry_lateral_joint) horizontal lateral motion (Y). -->
+  <!-- Stage 4 (gantry_rotate_joint) tool rotation about Z.           -->
   <!-- Geometry is placeholder rectangular prisms; refine as needed. -->
   <!-- ============================================================= -->
 
-  <!-- Stage 2 - side (Y) carriage, mounted on top of the Z stage -->
-  <link name="gantry_y_link">
+  <!-- Stage 2 - second vertical lift, mounted on top of stage 1 -->
+  <link name="gantry_lift2_link">
     <inertial>
       <origin xyz="0 0 0.05" rpy="0 0 0" />
-      <mass value="3.0" />
-      <inertia ixx="0.065" ixy="0.0" ixz="0.0"
-               iyy="0.0061" iyz="0.0" izz="0.0661" />
+      <mass value="1.5" />
+      <inertia ixx="0.0325" ixy="0.0" ixz="0.0"
+               iyy="0.00305" iyz="0.0" izz="0.03305" />
     </inertial>
     <visual>
-      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <origin xyz="0 -0.265 0.1" rpy="1.5708 0 1.5708" />
       <geometry>
-        <box size="0.12 0.50 0.10" />
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_3_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
-        <color rgba="0.30 0.45 0.85 1" />
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <origin xyz="0 -0.265 0.1" rpy="1.5708 0 1.5708" />
       <geometry>
-        <box size="0.12 0.50 0.10" />
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_3_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
-  <joint name="gantry_y_joint" type="prismatic">
-    <origin xyz="0 0 0.73" rpy="0 0 0" />
-    <parent link="gantry_z_link" />
-    <child link="gantry_y_link" />
-    <axis xyz="0 1 0" />
-    <limit lower="-0.25" upper="0.25" effort="500.0" velocity="0.2" />
+  <joint name="gantry_lift2_joint" type="prismatic">
+    <origin xyz="0.19 0 0.423" rpy="0 0 0" />
+    <parent link="gantry_lift1_link" />
+    <child link="gantry_lift2_link" />
+    <axis xyz="0 0 1" />
+    <limit lower="0.0" upper="1.0" effort="500.0" velocity="0.2" />
   </joint>
 
-  <!-- Stage 3 - reach (X) beam, mounted on the Y carriage -->
-  <link name="gantry_x_link">
+  <!-- Stage 3 - lateral (horizontal Y) beam, mounted on the stage 2 carriage -->
+  <link name="gantry_lateral_link">
     <inertial>
       <origin xyz="0.15 0 0.05" rpy="0 0 0" />
-      <mass value="2.0" />
-      <inertia ixx="0.0033" ixy="0.0" ixz="0.0"
-               iyy="0.0433" iyz="0.0" izz="0.0433" />
+      <mass value="1.0" />
+      <inertia ixx="0.00165" ixy="0.0" ixz="0.0"
+               iyy="0.02165" iyz="0.0" izz="0.02165" />
     </inertial>
     <visual>
-      <origin xyz="0.15 0 0.05" rpy="0 0 0" />
+      <origin xyz="0.059 0.065 -0.09" rpy="0 0 1.5708" />
       <geometry>
-        <box size="0.50 0.10 0.10" />
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/rotatory-RL_D_50_102_48_01035.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
-        <color rgba="0.30 0.75 0.40 1" />
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
       </material>
     </visual>
     <collision>
-      <origin xyz="0.15 0 0.05" rpy="0 0 0" />
+      <origin xyz="0.059 0.065 -0.09" rpy="0 0 1.5708" />
       <geometry>
-        <box size="0.50 0.10 0.10" />
+        <mesh
+          filename="package://robo_drill/robo_drill_description/meshes/rotatory-RL_D_50_102_48_01035.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
-  <joint name="gantry_x_joint" type="prismatic">
+  <joint name="gantry_lateral_joint" type="prismatic">
     <origin xyz="0 0 0.10" rpy="0 0 0" />
-    <parent link="gantry_y_link" />
-    <child link="gantry_x_link" />
-    <axis xyz="1 0 0" />
-    <limit lower="0.0" upper="0.40" effort="500.0" velocity="0.2" />
+    <parent link="gantry_lift2_link" />
+    <child link="gantry_lateral_link" />
+    <axis xyz="0 1 0" />
+    <limit lower="-0.196" upper="0.196" effort="500.0" velocity="0.2" />
   </joint>
 
   <!-- End rotation - tool that rotates about Z, at the front of the reach beam -->
-  <link name="gantry_rot_link">
+  <link name="gantry_rotate_link">
     <inertial>
       <origin xyz="0 0 -0.075" rpy="0 0 0" />
-      <mass value="1.0" />
-      <inertia ixx="0.0024" ixy="0.0" ixz="0.0"
-               iyy="0.0024" iyz="0.0" izz="0.0011" />
+      <mass value="0.5" />
+      <inertia ixx="0.0012" ixy="0.0" ixz="0.0"
+               iyy="0.0012" iyz="0.0" izz="0.00055" />
     </inertial>
-    <visual>
-      <origin xyz="0 0 -0.075" rpy="0 0 0" />
-      <geometry>
-        <box size="0.08 0.08 0.15" />
-      </geometry>
-      <material name="">
-        <color rgba="0.90 0.55 0.15 1" />
-      </material>
-    </visual>
     <collision>
       <origin xyz="0 0 -0.075" rpy="0 0 0" />
       <geometry>
@@ -473,12 +490,23 @@
       </geometry>
     </collision>
   </link>
-  <joint name="gantry_rot_joint" type="revolute">
-    <origin xyz="0.40 0 0.05" rpy="0 0 0" />
-    <parent link="gantry_x_link" />
-    <child link="gantry_rot_link" />
+  <joint name="gantry_rotate_joint" type="revolute">
+    <origin xyz="0.06 0.06 0.0" rpy="1.5708 0 1.5708" />
+    <parent link="gantry_lateral_link" />
+    <child link="gantry_rotate_link" />
     <axis xyz="0 0 1" />
     <limit lower="-3.1416" upper="3.1416" effort="100.0" velocity="1.0" />
+  </joint>
+
+  <!-- Drill tool-tip frame: fixed to the end-rotation link. robot_state_publisher -->
+  <!-- emits its TF automatically (no controller/ros2_control entry needed). -->
+  <link name="drill_tip"/>
+  <joint name="drill_tip_joint" type="fixed">
+    <origin
+      xyz="${drill_tip_x} ${drill_tip_y} ${drill_tip_z}"
+      rpy="${drill_tip_roll} ${drill_tip_pitch} ${drill_tip_yaw}" />
+    <parent link="gantry_rotate_link" />
+    <child link="drill_tip" />
   </joint>
 
   <!-- Add Gazebo materials for the pokeye links -->
@@ -491,22 +519,22 @@
       <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_z_link">
+  <gazebo reference="gantry_lift1_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_y_link">
+  <gazebo reference="gantry_lift2_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_x_link">
+  <gazebo reference="gantry_lateral_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_rot_link">
+  <gazebo reference="gantry_rotate_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
