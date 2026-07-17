@@ -69,22 +69,22 @@
             </hardware>
         </xacro:unless>
 
-        <joint name="gantry_z_joint">
+        <joint name="stage1_lift_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
         </joint>
-        <joint name="gantry_y_joint">
+        <joint name="stage2_lift_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
         </joint>
-        <joint name="gantry_x_joint">
+        <joint name="stage3_horizontal_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
         </joint>
-        <joint name="gantry_rot_joint">
+        <joint name="stage4_rotate_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>

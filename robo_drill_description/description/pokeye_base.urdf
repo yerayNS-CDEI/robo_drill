@@ -16,8 +16,8 @@
 
   <!-- ===== Drill tool-tip frame =========================================== -->
   <!-- `drill_tip` is a fixed frame at the tip of the drill bit, rigidly       -->
-  <!-- attached to the last moving link (gantry_rotate_link). The drill body   -->
-  <!-- extends along -Z of gantry_rotate_link (see its collision box, which    -->
+  <!-- attached to the last moving link (stage4_rotate_link). The drill body   -->
+  <!-- extends along -Z of stage4_rotate_link (see its collision box, which    -->
   <!-- spans z = 0 .. -0.15). These offsets are a PLACEHOLDER: measure the     -->
   <!-- real bit-tip position/orientation on the tool and update them here.     -->
   <xacro:property name="drill_tip_x" value="-0.40"/>
@@ -205,7 +205,7 @@
       </material>
     </visual>
     <!-- Fixed outer sleeve for the vertical (Z) gantry stage.
-         The prismatic child link (gantry_lift1_link) is the moving inner stage; this
+         The prismatic child link (stage1_lift_link) is the moving inner stage; this
          sleeve keeps the structure visually connected when the stage is extended. -->
     <visual>
       <origin
@@ -253,95 +253,8 @@
       <origin xyz="-0.167 0.0 0.125" rpy="0 0 0"/>
   </joint>
 
-  <!-- Hidden support casters for Gazebo physics.
-       The full turret STL already contains the visible caster geometry, but
-       using that detailed mesh as the contact surface makes the turret legs
-       take the load before the drive wheels. These simple spheres provide
-       stable, low-friction support at the leg contact points. -->
-  <link name="turret_caster_fl">
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.025"/>
-      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
-    </inertial>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="0.045"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="turret_caster_fl_joint" type="fixed">
-    <origin xyz="-0.3848 0.2810 -0.335" rpy="0 0 0"/>
-    <parent link="turret_link"/>
-    <child link="turret_caster_fl"/>
-  </joint>
-
-  <link name="turret_caster_fr">
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.025"/>
-      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
-    </inertial>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="0.045"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="turret_caster_fr_joint" type="fixed">
-    <origin xyz="-0.3820 -0.2838 -0.335" rpy="0 0 0"/>
-    <parent link="turret_link"/>
-    <child link="turret_caster_fr"/>
-  </joint>
-
-  <link name="turret_caster_bl">
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.025"/>
-      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
-    </inertial>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="0.045"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="turret_caster_bl_joint" type="fixed">
-    <origin xyz="0.3820 0.2838 -0.335" rpy="0 0 0"/>
-    <parent link="turret_link"/>
-    <child link="turret_caster_bl"/>
-  </joint>
-
-  <link name="turret_caster_br">
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.025"/>
-      <inertia ixx="0.00005" ixy="0.0" ixz="0.0" iyy="0.00005" iyz="0.0" izz="0.00005"/>
-    </inertial>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="0.045"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="turret_caster_br_joint" type="fixed">
-    <origin xyz="0.3848 -0.2810 -0.335" rpy="0 0 0"/>
-    <parent link="turret_link"/>
-    <child link="turret_caster_br"/>
-  </joint>
-
-
-  
   <link
-    name="gantry_lift1_link">
+    name="stage1_lift_link">
     <inertial>
       <origin
         xyz="0 0 0.0"
@@ -380,7 +293,7 @@
     </collision>
   </link>
   <joint
-    name="gantry_lift1_joint"
+    name="stage1_lift_joint"
     type="prismatic">
     <origin
       xyz="0.2905 0 0"
@@ -388,7 +301,7 @@
     <parent
       link="turret_link" />
     <child
-      link="gantry_lift1_link" />
+      link="stage1_lift_link" />
         <axis
     xyz="0 0 1" />
   <limit
@@ -400,15 +313,15 @@
 
   <!-- ============================================================= -->
   <!-- Pokeye 3-stage linear-actuator gantry + end rotation.         -->
-  <!-- Stage 1 (gantry_lift1_joint) vertical lift is the joint above. -->
-  <!-- Stage 2 (gantry_lift2_joint) second vertical lift.             -->
-  <!-- Stage 3 (gantry_lateral_joint) horizontal lateral motion (Y). -->
-  <!-- Stage 4 (gantry_rotate_joint) tool rotation about Z.           -->
+  <!-- Stage 1 (stage1_lift_joint) vertical lift is the joint above. -->
+  <!-- Stage 2 (stage2_lift_joint) second vertical lift.             -->
+  <!-- Stage 3 (stage3_horizontal_joint) horizontal lateral motion (Y). -->
+  <!-- Stage 4 (stage4_rotate_joint) tool rotation about Z.           -->
   <!-- Geometry is placeholder rectangular prisms; refine as needed. -->
   <!-- ============================================================= -->
 
   <!-- Stage 2 - second vertical lift, mounted on top of stage 1 -->
-  <link name="gantry_lift2_link">
+  <link name="stage2_lift_link">
     <inertial>
       <origin xyz="0 0 0.05" rpy="0 0 0" />
       <mass value="1.5" />
@@ -433,16 +346,16 @@
       </geometry>
     </collision>
   </link>
-  <joint name="gantry_lift2_joint" type="prismatic">
+  <joint name="stage2_lift_joint" type="prismatic">
     <origin xyz="0.19 0 0.423" rpy="0 0 0" />
-    <parent link="gantry_lift1_link" />
-    <child link="gantry_lift2_link" />
+    <parent link="stage1_lift_link" />
+    <child link="stage2_lift_link" />
     <axis xyz="0 0 1" />
     <limit lower="0.0" upper="1.0" effort="500.0" velocity="0.2" />
   </joint>
 
   <!-- Stage 3 - lateral (horizontal Y) beam, mounted on the stage 2 carriage -->
-  <link name="gantry_lateral_link">
+  <link name="stage3_horizontal_link">
     <inertial>
       <origin xyz="0.15 0 0.05" rpy="0 0 0" />
       <mass value="1.0" />
@@ -467,16 +380,16 @@
       </geometry>
     </collision>
   </link>
-  <joint name="gantry_lateral_joint" type="prismatic">
+  <joint name="stage3_horizontal_joint" type="prismatic">
     <origin xyz="0 0 0.10" rpy="0 0 0" />
-    <parent link="gantry_lift2_link" />
-    <child link="gantry_lateral_link" />
+    <parent link="stage2_lift_link" />
+    <child link="stage3_horizontal_link" />
     <axis xyz="0 1 0" />
     <limit lower="-0.196" upper="0.196" effort="500.0" velocity="0.2" />
   </joint>
 
   <!-- End rotation - tool that rotates about Z, at the front of the reach beam -->
-  <link name="gantry_rotate_link">
+  <link name="stage4_rotate_link">
     <inertial>
       <origin xyz="0 0 -0.075" rpy="0 0 0" />
       <mass value="0.5" />
@@ -490,10 +403,10 @@
       </geometry>
     </collision>
   </link>
-  <joint name="gantry_rotate_joint" type="revolute">
+  <joint name="stage4_rotate_joint" type="revolute">
     <origin xyz="0.06 0.06 0.0" rpy="1.5708 0 1.5708" />
-    <parent link="gantry_lateral_link" />
-    <child link="gantry_rotate_link" />
+    <parent link="stage3_horizontal_link" />
+    <child link="stage4_rotate_link" />
     <axis xyz="0 0 1" />
     <limit lower="-3.1416" upper="3.1416" effort="100.0" velocity="1.0" />
   </joint>
@@ -505,7 +418,7 @@
     <origin
       xyz="${drill_tip_x} ${drill_tip_y} ${drill_tip_z}"
       rpy="${drill_tip_roll} ${drill_tip_pitch} ${drill_tip_yaw}" />
-    <parent link="gantry_rotate_link" />
+    <parent link="stage4_rotate_link" />
     <child link="drill_tip" />
   </joint>
 
@@ -519,22 +432,22 @@
       <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_lift1_link">
+  <gazebo reference="stage1_lift_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_lift2_link">
+  <gazebo reference="stage2_lift_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_lateral_link">
+  <gazebo reference="stage3_horizontal_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="gantry_rotate_link">
+  <gazebo reference="stage4_rotate_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
@@ -568,40 +481,4 @@
       <provideFeedback>true</provideFeedback>
   </gazebo>
 
-  <gazebo reference="turret_caster_fl">
-      <mu1>0.001</mu1>
-      <mu2>0.001</mu2>
-      <kp>1000000.0</kp>
-      <kd>50.0</kd>
-      <minDepth>0.001</minDepth>
-      <maxVel>0.1</maxVel>
-  </gazebo>
-
-  <gazebo reference="turret_caster_fr">
-      <mu1>0.001</mu1>
-      <mu2>0.001</mu2>
-      <kp>1000000.0</kp>
-      <kd>50.0</kd>
-      <minDepth>0.001</minDepth>
-      <maxVel>0.1</maxVel>
-  </gazebo>
-
-  <gazebo reference="turret_caster_bl">
-      <mu1>0.001</mu1>
-      <mu2>0.001</mu2>
-      <kp>1000000.0</kp>
-      <kd>50.0</kd>
-      <minDepth>0.001</minDepth>
-      <maxVel>0.1</maxVel>
-  </gazebo>
-
-  <gazebo reference="turret_caster_br">
-      <mu1>0.001</mu1>
-      <mu2>0.001</mu2>
-      <kp>1000000.0</kp>
-      <kd>50.0</kd>
-      <minDepth>0.001</minDepth>
-      <maxVel>0.1</maxVel>
-  </gazebo>
-  
 </robot>

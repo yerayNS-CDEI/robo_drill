@@ -22,13 +22,6 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "dome",
-            default_value="true"
-        )
-    )
-
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "oak",
             default_value="true",
             description="Whether to launch DepthAI OAK-D camera driver on real hardware"
@@ -36,18 +29,8 @@ def generate_launch_description():
     )
 
     # Initialize Arguments
-    launch_dome = LaunchConfiguration("dome")
     launch_sick = LaunchConfiguration("sick")
     launch_oak = LaunchConfiguration("oak")
-
-    # Include the Ouster launch file if Ouster is detected
-    dome_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([FindPackageShare('ouster_ros'), 'launch', 'dome_driver.launch.py'])
-            ]),
-            launch_arguments={'viz': 'false'}.items(),
-        condition=IfCondition(launch_dome)
-        )
 
     # NOTE: resolve these lazily via FindPackageShare (a substitution) rather than
     # get_package_share_directory(). The substitution is only evaluated when the
@@ -136,35 +119,11 @@ def generate_launch_description():
         )]
     )
     
-    # Connect camera_link as child of os_lidar (which is published by Ouster driver)
-    # The Ouster driver publishes: os_sensor -> os_lidar
-    # The URDF publishes: base_link -> turret_link -> os_sensor
-    # This connects them: os_lidar (from driver) -> camera_link
-    static_tf_camera = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        arguments=['0.0075', '-0.128', '0.015', 
-                  '-0.747', '0.006', '-0.664', '0.005',
-                  'os_sensor_mount', 'camera_link']
-    )
-    
-    # Bridge URDF's os_sensor_mount to driver's os_sensor
-    # This connects the robot's TF tree to the sensor's TF tree
-    static_tf_os_bridge = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        arguments=['0', '0', '0', '0', '0', '0',
-                  'os_sensor_mount', 'os_sensor']
-    )
-    
     sensors = [
-        dome_launch,
         sick_node_rear,
         sick_node_front,
         realsense_launch,
         realsense_rear_launch,
-        static_tf_os_bridge,
-        # static_tf_camera,
         # oak_launch,
     ]
 

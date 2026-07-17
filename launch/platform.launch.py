@@ -60,14 +60,6 @@ def generate_launch_description():
 
     declared_arguments.append(
         DeclareLaunchArgument(
-            "dome",
-            default_value="true",
-            description="Whether to launch dome lidar driver",
-        )
-    )
-
-    declared_arguments.append(
-        DeclareLaunchArgument(
             "odom_tf_from_controller",
             default_value="false",
             description="Get odom->base_link tf from diff drive controller.",
@@ -138,7 +130,6 @@ def generate_launch_description():
     world_name = LaunchConfiguration('world')
     headless = LaunchConfiguration('headless')
     launch_sick = LaunchConfiguration("sick")
-    launch_dome = LaunchConfiguration("dome")
     odom_tf_from_controller = LaunchConfiguration("odom_tf_from_controller")
     mode = LaunchConfiguration("mode")
     controller_type = LaunchConfiguration("controller_type")
@@ -190,7 +181,6 @@ def generate_launch_description():
         ]),
         launch_arguments={
             'sick': launch_sick,
-            'dome': launch_dome,
             'oak': LaunchConfiguration('oak'),
             'realsense_color_profile': realsense_color_profile,
             'realsense_depth_profile': realsense_depth_profile,

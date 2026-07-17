@@ -46,17 +46,15 @@
                 <cylinder radius="${lidar_diameter/2}" length="${lidar_height}" />
             </geometry>
         </collision>
-        <xacro:unless value="${sick_link == 'os_lidar'}">
-            <visual name="base_visual">
-                <origin xyz="0 0 -0.056" rpy="0 0 -1.57" />
-                <geometry>
-                    <mesh filename="package://robo_drill/robo_drill_description/meshes/sick.STL" scale="0.001 0.001 0.001"/>
-                </geometry>
-                <material name="bluish_grey">
-                    <color rgba="0.15 0.15 0.2 1.0"/>
-                </material>
-            </visual>
-        </xacro:unless>
+        <visual name="base_visual">
+            <origin xyz="0 0 -0.056" rpy="0 0 -1.57" />
+            <geometry>
+                <mesh filename="package://robo_drill/robo_drill_description/meshes/sick.STL" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="bluish_grey">
+                <color rgba="0.15 0.15 0.2 1.0"/>
+            </material>
+        </visual>
     </link>
 
     <link name="${sick_scan_link}" />
