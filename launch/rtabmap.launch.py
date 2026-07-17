@@ -21,7 +21,7 @@ def launch_setup(context: LaunchContext, *args, **kwargs):
     robot_base_frame = 'turret_footprint' if controller_type == 'omni' else 'base_footprint'
 
 
-    pointcloud_frame_id = 'os_lidar'
+    pointcloud_frame_id = 'front_sick_scan'
     point_cloud_topic = LaunchConfiguration('input_cloud_topic').perform(context)
 
     # Common parameters
@@ -131,16 +131,15 @@ def launch_setup(context: LaunchContext, *args, **kwargs):
         name='point_cloud_aggregator',
         output='screen',
         parameters=[{
-            "frame_id": pointcloud_frame_id, # lidar_name arg can be avoided and fix the pointcloud_frame_id to sick or os_lidar
+            "frame_id": pointcloud_frame_id, # common frame the SICK clouds are aggregated into
             "fixed_frame_id": "odom",
             "queue_size": 10,
-            "count": 3, #* number of clouds to aggregate
+            "count": 2, #* number of clouds to aggregate (front + rear SICK)
             "wait_for_transform_duration": wait_for_transform,
             "use_sim_time": use_sim_time,
         }],
-        remappings=[("cloud1", "/dome/points"),
-                    ("cloud2", "/front/points"),
-                    ("cloud3", "/rear/points"),
+        remappings=[("cloud1", "/front/points"),
+                    ("cloud2", "/rear/points"),
                     ],
         condition=IfCondition(use_sim_time_config),
     )
@@ -346,7 +345,7 @@ def generate_launch_description():
     
     ld.add_action(DeclareLaunchArgument(
         'pointcloud_frame_id',
-        default_value='os_lidar', 
+        default_value='front_sick_scan',
         description='Frame id used as reference for point cloud'
     ))
 

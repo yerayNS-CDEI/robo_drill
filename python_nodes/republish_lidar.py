@@ -33,8 +33,8 @@ class RemoveIntensityNode(Node):
         super().__init__('republish_lidar')
 
         # Parameters
-        self.declare_parameter('input_topic', '/dome/points')
-        self.declare_parameter('output_topic', '/dome_points')
+        self.declare_parameter('input_topic', '/points')
+        self.declare_parameter('output_topic', '/points_no_intensity')
 
         input_topic = self.get_parameter('input_topic').get_parameter_value().string_value
         output_topic = self.get_parameter('output_topic').get_parameter_value().string_value

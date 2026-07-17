@@ -34,14 +34,6 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
- 
-# Dome Sick lidar - PointCloud2 (simulation only)
-- ros_topic_name: "dome/points"
-  gz_topic_name: "dome/points/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
-  direction: GZ_TO_ROS
-
 # Camera color image (CameraInfo only - images bridged via ros_gz_image)
 - ros_topic_name: "camera/camera/color/camera_info"
   gz_topic_name: "camera/camera/color/camera_info"

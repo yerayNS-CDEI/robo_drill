@@ -15,7 +15,7 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            DeclareLaunchArgument("target_frame", default_value="os_lidar"),
+            DeclareLaunchArgument("target_frame", default_value="front_sick_scan"),
             DeclareLaunchArgument("transform_timeout_sec", default_value="0.05"),
             DeclareLaunchArgument("fallback_to_latest_transform", default_value="true"),
             Node(

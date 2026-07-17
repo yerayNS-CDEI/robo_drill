@@ -18,7 +18,7 @@ An autonomous navigation robot package for ROS2 that performs 3D mapping using R
 ## Overview
 
 This project provides a complete autonomous navigation solution for a differential drive robot equipped with:
-- 3D LiDAR sensor (Ouster Dome or SICK)
+- 3D LiDAR sensors (SICK multiScan)
 - Two depth cameras for visual feature detection and point cloud colorization
 - U10 robotic arm mounted on top for wall scanning applications
 - IMU and odometry sensors
@@ -55,7 +55,7 @@ The robot can:
 - Nav2
 - Gazebo (for simulation)
 - Required sensors (for real robot):
-  - 3D LiDAR (Ouster Dome or SICK)
+  - 3D LiDAR (SICK multiScan)
   - Two OAK-D cameras
   - Joystick controller
   - U10 arm (for wall scanning applications)
@@ -108,7 +108,7 @@ ros2 launch robo_drill mapping_3d.launch.py sim:=true world:=warehouse
 
 **Real Robot:**
 ```bash
-ros2 launch robo_drill mapping_3d.launch.py sim:=false lidar:=dome
+ros2 launch robo_drill mapping_3d.launch.py sim:=false
 ```
 
 #### Parameters
@@ -117,7 +117,7 @@ ros2 launch robo_drill mapping_3d.launch.py sim:=false lidar:=dome
 |-----------|---------|-------------|
 | `sim` | `false` | Enable simulation mode |
 | `world` | `warehouse` | World file for simulation (e.g., warehouse, office) |
-| `lidar` | `dome` | LiDAR sensor type (`dome` or `sick`) |
+| `lidar` | `sick` | LiDAR sensor type (`sick`) |
 | `oak` | `true` | Enable OAK-D camera drivers (both cameras) |
 | `odom_tf_from_controller` | `false` | Get odom→base_link TF from diff drive controller |
 | `rtab_viz` | `false` | Launch RTABMap visualization tool |
@@ -186,7 +186,7 @@ database_name:=warehouse_map
 | `localizer` | `rtab` | Localization method (`rtab`, `amcl`, or `slam`) |
 | `map` | `warehouse_map` | Map YAML file name (for AMCL/SLAM modes) |
 | `database_name` | `rtabmap` | RTABMap database name (for RTABMap localization) |
-| `lidar` | `dome` | LiDAR sensor type (`dome` or `sick`) |
+| `lidar` | `sick` | LiDAR sensor type (`sick`) |
 | `oak` | `true` | Enable OAK-D camera drivers (both cameras) |
 | `odom_tf_from_controller` | `false` | Get odom→base_link TF from controller |
 | `rtab_viz` | `false` | Launch RTABMap visualization tool |
@@ -243,12 +243,12 @@ Launch Gazebo simulation environment with the robot.
 
 #### Usage
 ```bash
-ros2 launch robo_drill sim.launch.py world:=warehouse lidar:=dome
+ros2 launch robo_drill sim.launch.py world:=warehouse
 ```
 
 #### Parameters
 - `world`: World name (default: `warehouse`)
-- `lidar`: LiDAR type (`dome` or `sick`)
+- `lidar`: LiDAR type (`sick`)
 - `headless`: Run Gazebo without GUI (default: `false`)
 
 ---
@@ -270,7 +270,6 @@ ros2 launch robo_drill platform.launch.py sim:=false
 - `sim`: Simulation mode (default: `false`)
 - `world`: World file for simulation (default: `warehouse`)
 - `sick`: Enable SICK LiDAR (default: `false`)
-- `dome`: Enable Dome LiDAR (default: `true`)
 - `oak`: Enable OAK-D cameras (default: `true`)
 - `odom_tf_from_controller`: TF from controller (default: `false`)
 
@@ -324,7 +323,7 @@ database_name:=my_warehouse_map
 ```bash
 # Step 1: Create map on real robot with calibrated cameras
 export ROS_DOMAIN_ID=1
-ros2 launch robo_drill mapping_3d.launch.py sim:=false lidar:=dome \
+ros2 launch robo_drill mapping_3d.launch.py sim:=false \
 database_name:=real_environment
 
 # Drive around with joystick until map is complete

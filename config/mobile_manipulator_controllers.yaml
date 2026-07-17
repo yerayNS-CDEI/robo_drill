@@ -247,10 +247,10 @@
 /**/gantry_position_controller:
   ros__parameters:
     joints:
-      - gantry_lift1_joint
-      - gantry_lift2_joint
-      - gantry_lateral_joint
-      - gantry_rotate_joint
+      - stage1_lift_joint
+      - stage2_lift_joint
+      - stage3_horizontal_joint
+      - stage4_rotate_joint
     interface_name: position
 
 sim_controller:

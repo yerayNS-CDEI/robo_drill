@@ -73,7 +73,6 @@
     <!-- <xacro:include filename="pokeye_base_links.xacro"/> -->
     <xacro:include filename="pokeye_base.urdf"/>
     <xacro:include filename="sick_multiscan.xacro"/>
-    <xacro:include filename="os-dome.xacro"/>
     <xacro:include filename="realsense_camera.xacro"/>
 
     <!-- Front-right Sick lidar -->
@@ -99,42 +98,29 @@
 
     />
 
-    <!-- Add third sick lidar only in simulation -->
-    <xacro:if value="$(arg simulation)">
-        <xacro:sick_multiscan_sensor
-            parent_link="os_sensor_mount"
-            namespace="dome"
-            sick_link="os_lidar"
-            sick_scan_link="dome_scan"
-            sick_imu_link="dome_imu"
-            origin_xyz="0 0 0"
-            origin_rpy="0 0 0"
-
-        />
-    </xacro:if>
-    
-    
     <!-- Front RealSense D435i (forward facing) - legacy frames/topics preserved -->
+    <!-- Parented directly to turret_link; origin composed from the previous
+         mount pose so the physical camera placement is unchanged. -->
     <xacro:realsense_d435
-        parent_link="os_sensor_mount"
+        parent_link="turret_link"
         camera_name="camera"
         topic_ns="camera/camera"
-        origin_xyz="0.0075 -0.128 0.015"
-        origin_rpy="-2.998 -1.541 -0.145"
+        origin_xyz="0.4495 0.1280 0.4600"
+        origin_rpy="-0.0015 -0.0295 0.0043"
     />
 
     <!-- Rear RealSense D435i (back of turret, for localization and mapping) -->
-    <!-- TODO: replace origin with the measured pose of the rear camera on os_sensor_mount -->
+    <!-- TODO: replace origin with the measured pose of the rear camera on turret_link -->
     <xacro:realsense_d435
-        parent_link="os_sensor_mount"
+        parent_link="turret_link"
         camera_name="camera_rear"
         topic_ns="camera_rear"
-        origin_xyz="0.0075 0.128 -0.84"
-        origin_rpy="-0.143 1.541 -0.145"
+        origin_xyz="-0.4055 -0.1280 0.4600"
+        origin_rpy="0.0021 -0.0295 3.1373"
     />
 
     <!-- Pokeye has no UR10e manipulator. The 3-stage linear-actuator gantry
-         (gantry_lift1_link -> gantry_lift2_link -> gantry_lateral_link -> gantry_rotate_link) is
+         (stage1_lift_link -> stage2_lift_link -> stage3_horizontal_link -> stage4_rotate_link) is
          defined in pokeye_base.urdf and is shared by both robo_drill.urdf.xacro
          and this file. The former UR10e + sensor_plate mount has been removed. -->
 

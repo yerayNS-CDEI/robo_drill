@@ -84,7 +84,7 @@ class RobotControlUI(QMainWindow):
         # Persistent publishers for emergency stop topics (keyed by topic name), created on demand
         self._emergency_stop_publishers = {}
         # Publisher for jogging the on-board gantry (Gantry Control tab).
-        # Order matches gantry_position_controller joints: [gantry_lift2, gantry_lateral, gantry_rotate].
+        # Order matches gantry_position_controller joints: [stage2_lift, stage3_horizontal, stage4_rotate].
         self.gantry_cmd_publisher = self.node.create_publisher(
             Float64MultiArray, '/gantry_position_controller/commands', 10
         )
@@ -345,18 +345,18 @@ class RobotControlUI(QMainWindow):
             "<code>/gantry_position_controller/commands</code>"
         ))
 
-        self.gantry_joint_names = ['gantry_lift1_joint', 'gantry_lift2_joint', 'gantry_lateral_joint', 'gantry_rotate_joint']
+        self.gantry_joint_names = ['stage1_lift_joint', 'stage2_lift_joint', 'stage3_horizontal_joint', 'stage4_rotate_joint']
         self.gantry_joint_labels = {
-            'gantry_lift1_joint': 'Stage 1 - Lift 1 / vertical (m)',
-            'gantry_lift2_joint': 'Stage 2 - Lift 2 / vertical (m)',
-            'gantry_lateral_joint': 'Stage 3 - Lateral / horizontal Y (m)',
-            'gantry_rotate_joint': 'Stage 4 - End Rotation (rad)',
+            'stage1_lift_joint': 'Stage 1 - Lift 1 / vertical (m)',
+            'stage2_lift_joint': 'Stage 2 - Lift 2 / vertical (m)',
+            'stage3_horizontal_joint': 'Stage 3 - Lateral / horizontal Y (m)',
+            'stage4_rotate_joint': 'Stage 4 - End Rotation (rad)',
         }
         self.gantry_joint_limits = {
-            'gantry_lift1_joint': (-0.47, 0.40),
-            'gantry_lift2_joint': (0.0, 1.0),
-            'gantry_lateral_joint': (-0.196, 0.196),
-            'gantry_rotate_joint': (-3.1416, 3.1416),
+            'stage1_lift_joint': (-0.47, 0.40),
+            'stage2_lift_joint': (0.0, 1.0),
+            'stage3_horizontal_joint': (-0.196, 0.196),
+            'stage4_rotate_joint': (-3.1416, 3.1416),
         }
         self.gantry_scale = 1000  # slider integer scale
 
