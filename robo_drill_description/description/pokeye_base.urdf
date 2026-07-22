@@ -15,16 +15,16 @@
   <xacro:property name="support_height" value="0.509"/>
 
   <!-- ===== Drill tool-tip frame =========================================== -->
-  <!-- `drill_tip` is a fixed frame at the tip of the drill bit, rigidly       -->
-  <!-- attached to the last moving link (stage4_rotate_link). The drill body   -->
-  <!-- extends along -Z of stage4_rotate_link (see its collision box, which    -->
-  <!-- spans z = 0 .. -0.15). These offsets are a PLACEHOLDER: measure the     -->
-  <!-- real bit-tip position/orientation on the tool and update them here.     -->
-  <xacro:property name="drill_tip_x" value="-0.40"/>
-  <xacro:property name="drill_tip_y" value="0.0"/>
-  <xacro:property name="drill_tip_z" value="0.10"/>
-  <xacro:property name="drill_tip_roll" value="0.0"/>
-  <xacro:property name="drill_tip_pitch" value="-1.5708"/>
+  <!-- `drill_tip` is a fixed frame at the tip of the drill bit, rigidly        -->
+  <!-- attached to the last moving link (stage4_horizontal_link). The drill     -->
+  <!-- body extends along -Z of stage4_horizontal_link (see its collision box,  -->
+  <!-- which spans z = 0 .. -0.15). These offsets are a PLACEHOLDER: measure    -->
+  <!-- the real bit-tip position/orientation on the tool and update them here.  -->
+  <xacro:property name="drill_tip_x" value="0.05"/>
+  <xacro:property name="drill_tip_y" value="-0.2"/>
+  <xacro:property name="drill_tip_z" value="0.0"/>
+  <xacro:property name="drill_tip_roll" value="1.5708"/>
+  <xacro:property name="drill_tip_pitch" value="0.0"/>
   <xacro:property name="drill_tip_yaw" value="0.0"/>
 
   <!-- ===== Base-mounted actuator mount points ============================= -->
@@ -394,8 +394,12 @@
   <!-- Pokeye 3-stage linear-actuator gantry + end rotation.         -->
   <!-- Stage 1 (stage1_lift_joint) vertical lift is the joint above. -->
   <!-- Stage 2 (stage2_lift_joint) second vertical lift.             -->
-  <!-- Stage 3 (stage3_horizontal_joint) horizontal lateral motion (Y). -->
-  <!-- Stage 4 (stage4_rotate_joint) tool rotation about Z.           -->
+  <!-- Stage 3 (stage3_rotate_joint) tool rotation about Z.          -->
+  <!-- Stage 4 (stage4_horizontal_joint) horizontal lateral motion, the last stage. -->
+  <!-- NOTE: stage 3 (rotary) carries stage 4 (horizontal slide), so -->
+  <!-- the horizontal travel direction rotates with stage 3.         -->
+  <!-- NOTE: the horizontal and rotary stages were previously swapped;-->
+  <!-- reality is rotary (3) -> horizontal (4). -->
   <!-- Geometry is placeholder rectangular prisms; refine as needed. -->
   <!-- ============================================================= -->
 
@@ -408,10 +412,10 @@
                iyy="0.00305" iyz="0.0" izz="0.03305" />
     </inertial>
     <visual>
-      <origin xyz="0 -0.265 0.1" rpy="1.5708 0 1.5708" />
+      <origin xyz="0.08 0 0" rpy="0 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_3_v3.stl" scale="0.001 0.001 0.001"/>
+          filename="package://robo_drill/robo_drill_description/meshes/rotatory-RL_D_50_102_48_01035.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
         <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -421,20 +425,21 @@
       <origin xyz="0 -0.265 0.1" rpy="1.5708 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_3_v3.stl" scale="0.001 0.001 0.001"/>
+          filename="package://robo_drill/robo_drill_description/meshes/rotatory-RL_D_50_102_48_01035.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
   <joint name="stage2_lift_joint" type="prismatic">
-    <origin xyz="0.19 0 0.423" rpy="0 0 0" />
+    <origin xyz="0.15 0 0.423" rpy="0 0 0" />
     <parent link="stage1_lift_link" />
     <child link="stage2_lift_link" />
     <axis xyz="0 0 1" />
     <limit lower="0.0" upper="1.0" effort="500.0" velocity="0.2" />
   </joint>
 
-  <!-- Stage 3 - lateral (horizontal Y) beam, mounted on the stage 2 carriage -->
-  <link name="stage3_horizontal_link">
+  <!-- Stage 3 - rotary actuator, mounted on the stage 2 carriage. Rotates the -->
+  <!-- horizontal reach stage (stage 4) about the vertical Z axis.             -->
+  <link name="stage3_rotate_link">
     <inertial>
       <origin xyz="0.15 0 0.05" rpy="0 0 0" />
       <mass value="1.0" />
@@ -442,10 +447,10 @@
                iyy="0.02165" iyz="0.0" izz="0.02165" />
     </inertial>
     <visual>
-      <origin xyz="0.059 0.065 -0.09" rpy="0 0 1.5708" />
+      <origin xyz="-0.33 0.0 0.05" rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/rotatory-RL_D_50_102_48_01035.stl" scale="0.001 0.001 0.001"/>
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_3_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="">
         <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -455,20 +460,22 @@
       <origin xyz="0.059 0.065 -0.09" rpy="0 0 1.5708" />
       <geometry>
         <mesh
-          filename="package://robo_drill/robo_drill_description/meshes/rotatory-RL_D_50_102_48_01035.stl" scale="0.001 0.001 0.001"/>
+          filename="package://robo_drill/robo_drill_description/meshes/d_e_stage_3_v3.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
-  <joint name="stage3_horizontal_joint" type="prismatic">
-    <origin xyz="0 0 0.10" rpy="0 0 0" />
+  <joint name="stage3_rotate_joint" type="revolute">
+    <origin xyz="0.08 0 0.10" rpy="1.5708 0 1.5708" />
     <parent link="stage2_lift_link" />
-    <child link="stage3_horizontal_link" />
-    <axis xyz="0 1 0" />
-    <limit lower="-0.196" upper="0.196" effort="500.0" velocity="0.2" />
+    <child link="stage3_rotate_link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.1416" upper="3.1416" effort="100.0" velocity="1.0" />
   </joint>
 
-  <!-- End rotation - tool that rotates about Z, at the front of the reach beam -->
-  <link name="stage4_rotate_link">
+  <!-- Stage 4 - horizontal reach stage (the last stage), mounted on the rotary  -->
+  <!-- stage 3. Slides laterally; its travel direction rotates with stage 3.     -->
+  <!-- Carries the drill tool (collision box below; drill_tip frame at its end). -->
+  <link name="stage4_horizontal_link">
     <inertial>
       <origin xyz="0 0 -0.075" rpy="0 0 0" />
       <mass value="0.5" />
@@ -482,12 +489,14 @@
       </geometry>
     </collision>
   </link>
-  <joint name="stage4_rotate_joint" type="revolute">
-    <origin xyz="0.06 0.06 0.0" rpy="1.5708 0 1.5708" />
-    <parent link="stage3_horizontal_link" />
-    <child link="stage4_rotate_link" />
-    <axis xyz="0 0 1" />
-    <limit lower="-3.1416" upper="3.1416" effort="100.0" velocity="1.0" />
+  <joint name="stage4_horizontal_joint" type="prismatic">
+    <origin xyz="0.0 0.0 0.08" rpy="-1.5708 -1.5708 0" />
+    <parent link="stage3_rotate_link" />
+    <child link="stage4_horizontal_link" />
+    <!-- local X of this (rotated) frame points along world Y at zero rotation, -->
+    <!-- giving lateral horizontal travel that follows stage 3's rotation.      -->
+    <axis xyz="0 1 0" />
+    <limit lower="-0.196" upper="0.196" effort="500.0" velocity="0.2" />
   </joint>
 
   <!-- Drill tool-tip frame: fixed to the end-rotation link. robot_state_publisher -->
@@ -497,7 +506,7 @@
     <origin
       xyz="${drill_tip_x} ${drill_tip_y} ${drill_tip_z}"
       rpy="${drill_tip_roll} ${drill_tip_pitch} ${drill_tip_yaw}" />
-    <parent link="stage4_rotate_link" />
+    <parent link="stage4_horizontal_link" />
     <child link="drill_tip" />
   </joint>
 
@@ -521,12 +530,12 @@
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="stage3_horizontal_link">
+  <gazebo reference="stage3_rotate_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>
 
-  <gazebo reference="stage4_rotate_link">
+  <gazebo reference="stage4_horizontal_link">
     <collide_bitmask>0</collide_bitmask>
     <gravity>false</gravity>
   </gazebo>

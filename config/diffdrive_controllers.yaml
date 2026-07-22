@@ -69,7 +69,7 @@ diffbot_base_controller:
 joint_state_broadcaster:
   ros__parameters:
     joints: [ 'drivewhl_l_joint', 'drivewhl_r_joint', 'turret_joint',
-              'stage1_lift_joint', 'stage2_lift_joint', 'stage3_horizontal_joint', 'stage4_rotate_joint' ]
+              'stage1_lift_joint', 'stage2_lift_joint', 'stage3_rotate_joint', 'stage4_horizontal_joint' ]
 
 turret_controller:
   ros__parameters:
@@ -80,8 +80,8 @@ gantry_position_controller:
     joints:
       - stage1_lift_joint
       - stage2_lift_joint
-      - stage3_horizontal_joint
-      - stage4_rotate_joint
+      - stage3_rotate_joint
+      - stage4_horizontal_joint
     interface_name: position
 
 sim_controller:

@@ -84,7 +84,7 @@ class RobotControlUI(QMainWindow):
         # Persistent publishers for emergency stop topics (keyed by topic name), created on demand
         self._emergency_stop_publishers = {}
         # Publisher for jogging the on-board gantry (Gantry Control tab).
-        # Order matches gantry_position_controller joints: [stage2_lift, stage3_horizontal, stage4_rotate].
+        # Order matches gantry_position_controller joints: [stage1_lift, stage2_lift, stage3_rotate, stage4_horizontal].
         self.gantry_cmd_publisher = self.node.create_publisher(
             Float64MultiArray, '/gantry_position_controller/commands', 10
         )
@@ -345,18 +345,18 @@ class RobotControlUI(QMainWindow):
             "<code>/gantry_position_controller/commands</code>"
         ))
 
-        self.gantry_joint_names = ['stage1_lift_joint', 'stage2_lift_joint', 'stage3_horizontal_joint', 'stage4_rotate_joint']
+        self.gantry_joint_names = ['stage1_lift_joint', 'stage2_lift_joint', 'stage3_rotate_joint', 'stage4_horizontal_joint']
         self.gantry_joint_labels = {
             'stage1_lift_joint': 'Stage 1 - Lift 1 / vertical (m)',
             'stage2_lift_joint': 'Stage 2 - Lift 2 / vertical (m)',
-            'stage3_horizontal_joint': 'Stage 3 - Lateral / horizontal Y (m)',
-            'stage4_rotate_joint': 'Stage 4 - End Rotation (rad)',
+            'stage3_rotate_joint': 'Stage 3 - End Rotation (rad)',
+            'stage4_horizontal_joint': 'Stage 4 - Lateral / horizontal Y (m)',
         }
         self.gantry_joint_limits = {
             'stage1_lift_joint': (-0.47, 0.40),
             'stage2_lift_joint': (0.0, 1.0),
-            'stage3_horizontal_joint': (-0.196, 0.196),
-            'stage4_rotate_joint': (-3.1416, 3.1416),
+            'stage3_rotate_joint': (-3.1416, 3.1416),
+            'stage4_horizontal_joint': (-0.196, 0.196),
         }
         self.gantry_scale = 1000  # slider integer scale
 

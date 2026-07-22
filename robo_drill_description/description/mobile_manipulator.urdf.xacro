@@ -120,7 +120,7 @@
     />
 
     <!-- Pokeye has no UR10e manipulator. The 3-stage linear-actuator gantry
-         (stage1_lift_link -> stage2_lift_link -> stage3_horizontal_link -> stage4_rotate_link) is
+         (stage1_lift_link -> stage2_lift_link -> stage3_rotate_link -> stage4_horizontal_link) is
          defined in pokeye_base.urdf and is shared by both robo_drill.urdf.xacro
          and this file. The former UR10e + sensor_plate mount has been removed. -->
 

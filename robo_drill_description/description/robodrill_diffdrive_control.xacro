@@ -79,12 +79,12 @@
             <state_interface name="position"/>
             <state_interface name="velocity"/>
         </joint>
-        <joint name="stage3_horizontal_joint">
+        <joint name="stage3_rotate_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
         </joint>
-        <joint name="stage4_rotate_joint">
+        <joint name="stage4_horizontal_joint">
             <command_interface name="position"/>
             <state_interface name="position"/>
             <state_interface name="velocity"/>
